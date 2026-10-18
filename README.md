@@ -278,6 +278,7 @@ BSc Management Information Systems, Malawi University of Business and Applied Sc
 
 ---
 
-## Portfolio Summary (CV / LinkedIn)
+
+ 
 
  
