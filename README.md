@@ -4,9 +4,7 @@
 ## Project Overview
 
 This project builds a rigorous, reproducible credit-risk prediction workflow for a fictional commercial bank in Malawi: from synthetic data generation through data validation, cleaning, exploratory analysis, feature engineering, classification modeling (Logistic Regression, Random Forest, XGBoost), probability calibration, threshold analysis, model interpretation, fairness assessment, and risk segmentation — ending in an interactive Streamlit dashboard and comprehensive model documentation.
-
-This is **Project 9** in a 10-project data science and analytics portfolio, following Health Facility Data Quality Assessment (1), Medicine Stock-Out Analysis (2), Hospital Patient Flow Analysis (3), and Banking Customer Churn Analysis (4). This project is deliberately distinct from churn: the focus here is **credit risk at the point of lending** — estimating probability of default from application-time borrower and loan characteristics — classification, model evaluation, and translating probabilities into a business decision-support tool.
-
+ 
 **Recent Enhancements:** The project has been upgraded to a professional, modular codebase with reusable data validation, preprocessing pipelines, model benchmarking with cross-validation, probability calibration, fairness analysis, automated testing, and an interactive dashboard.
 
 ## Problem Statement
