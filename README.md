@@ -1,4 +1,4 @@
-# Loan Default Risk Prediction — Nyanja Commercial Bank (Fictional)
+# Loan Default Risk Prediction — Nyanja Commercial Bank  
 ## Malawi Commercial Banking — Synthetic Portfolio Dataset
 
 ## Project Overview
@@ -280,5 +280,4 @@ BSc Management Information Systems, Malawi University of Business and Applied Sc
 
 ## Portfolio Summary (CV / LinkedIn)
 
-**Loan Default Risk Prediction — Malawi Commercial Bank (Synthetic Data)**
-Built an end-to-end credit-risk classification project on a synthetic 20,000-application loan dataset: engineered a realistic logistic default-generating process, cleaned 10 categories of injected data-quality issues, and trained/compared Logistic Regression, Random Forest, and XGBoost classifiers (best ROC-AUC 0.776) inside a leakage-aware Scikit-learn pipeline. Performed threshold analysis to recommend an operating point favoring recall (78.2%) over the default 0.50 cutoff, given the asymmetric cost of missed defaults in credit risk. Cross-validated feature importance between a linear and a tree-based model (both independently ranked debt-to-income ratio and existing loan count as top predictors) and built a 3-tier risk segmentation that was validated against actual outcomes (3.0% / 11.0% / 37.0% default rates across Low/Medium/High risk). Specified a 4-page Power BI dashboard for credit-risk analysts and management. Tools: Python, Pandas, Scikit-learn, XGBoost, Matplotlib/Seaborn, Power BI.
+ 
