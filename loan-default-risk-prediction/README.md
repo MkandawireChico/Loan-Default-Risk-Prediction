@@ -3,9 +3,11 @@
 
 ## Project Overview
 
-This project builds a complete credit-risk prediction workflow for a fictional commercial bank in Malawi: from synthetic data generation through cleaning, exploratory analysis, feature engineering, classification modeling (Logistic Regression, Random Forest, XGBoost), threshold analysis, model interpretation, and risk segmentation — ending in a Power BI dashboard specification for credit-risk analysts and management.
+This project builds a rigorous, reproducible credit-risk prediction workflow for a fictional commercial bank in Malawi: from synthetic data generation through data validation, cleaning, exploratory analysis, feature engineering, classification modeling (Logistic Regression, Random Forest, XGBoost), probability calibration, threshold analysis, model interpretation, fairness assessment, and risk segmentation — ending in an interactive Streamlit dashboard and comprehensive model documentation.
 
 This is **Project 9** in a 10-project data science and analytics portfolio, following Health Facility Data Quality Assessment (1), Medicine Stock-Out Analysis (2), Hospital Patient Flow Analysis (3), and Banking Customer Churn Analysis (4). This project is deliberately distinct from churn: the focus here is **credit risk at the point of lending** — estimating probability of default from application-time borrower and loan characteristics — classification, model evaluation, and translating probabilities into a business decision-support tool.
+
+**Recent Enhancements:** The project has been upgraded to a professional, modular codebase with reusable data validation, preprocessing pipelines, model benchmarking with cross-validation, probability calibration, fairness analysis, automated testing, and an interactive dashboard.
 
 ## Problem Statement
 
@@ -178,15 +180,52 @@ loan-default-risk-prediction/
 ├── notebooks/
 │   └── loan_default_risk_analysis.ipynb         # Full workflow, executed with real outputs
 ├── src/
-│   └── generate_data.py                          # Standalone, reproducible data generator
+│   ├── data/
+│   │   ├── __init__.py
+│   │   ├── loading.py                          # Data loading utilities
+│   │   ├── validation.py                       # Data validation functions
+│   │   └── preprocessing.py                    # Data cleaning and preprocessing
+│   ├── features/
+│   │   ├── __init__.py
+│   │   └── engineering.py                      # Feature engineering functions
+│   ├── models/
+│   │   ├── __init__.py
+│   │   └── training.py                         # Model training functions
+│   ├── evaluation/
+│   │   ├── __init__.py
+│   │   ├── metrics.py                          # Credit-risk evaluation metrics
+│   │   └── calibration.py                      # Probability calibration
+│   ├── explainability/
+│   │   ├── __init__.py
+│   │   ├── shap_analysis.py                    # SHAP-based explanations
+│   │   └── fairness.py                         # Fairness analysis
+│   ├── analytics/
+│   │   ├── __init__.py
+│   │   └── sql_queries.py                      # SQL analytics queries
+│   └── generate_data.py                        # Standalone, reproducible data generator
+├── scripts/
+│   ├── train_model.py                          # Model training script
+│   ├── calibrate_model.py                      # Model calibration script
+│   └── explain_model.py                        # Model explainability script
+├── tests/
+│   ├── __init__.py
+│   └── test_data_validation.py                 # Automated tests
 ├── models/
-│   ├── logistic_regression_pipeline.joblib
+│   ├── baseline_pipeline.joblib
+│   ├── logistic_pipeline.joblib
+│   ├── logistic_calibrated_pipeline.joblib
 │   ├── random_forest_pipeline.joblib
-│   └── xgboost_pipeline.joblib
+│   ├── xgboost_pipeline.joblib
+│   └── benchmark_results.csv
+├── visuals/                                    # Chart exports from notebook and scripts
 ├── dashboard/
-│   └── power_bi_dashboard_specification.md       # Specification (not yet built)
-├── visuals/                                       # 12 chart exports from the notebook
+│   └── power_bi_dashboard_specification.md     # Power BI specification
+├── .github/
+│   └── workflows/
+│       └── ci.yml                             # GitHub Actions CI
+├── app.py                                     # Streamlit dashboard
 ├── requirements.txt
+├── pyproject.toml                             # Project configuration (pytest, ruff)
 ├── .gitignore
 └── README.md
 ```
@@ -198,15 +237,34 @@ git clone <this-repo>
 cd loan-default-risk-prediction
 pip install -r requirements.txt
 
-# Option A: run the full notebook (generates data + trains models + exports everything)
+# Option A: Run the full notebook (generates data + trains models + exports everything)
 jupyter notebook notebooks/loan_default_risk_analysis.ipynb
 
-# Option B: regenerate just the raw dataset independently
-cd src
-python generate_data.py
+# Option B: Use the modular scripts (recommended for production workflows)
+# Generate synthetic data
+python src/generate_data.py
+
+# Train models with data validation
+python scripts/train_model.py --model benchmark  # Benchmark all models
+python scripts/train_model.py --model logistic    # Train specific model
+
+# Calibrate model probabilities
+python scripts/calibrate_model.py --model logistic
+
+# Generate explainability and fairness reports
+python scripts/explain_model.py --model logistic
+
+# Run automated tests
+pytest tests/ -v
+
+# Lint code
+ruff check src/ tests/ scripts/
+
+# Launch interactive dashboard
+streamlit run app.py
 ```
 
-Both paths use `np.random.seed(42)` and reproduce byte-for-byte the same dataset described in this README.
+All paths use `np.random.seed(42)` and reproduce the same dataset described in this README.
 
 ## Synthetic-Data Disclaimer
 

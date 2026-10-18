@@ -1,0 +1,190 @@
+{
+  "by_attribute": {
+    "Gender": [
+      {
+        "count": 2709,
+        "default_rate": 0.17829457364341086,
+        "mean_predicted_prob": 0.4199110987590172,
+        "roc_auc": 0.7765835346990861,
+        "attribute": "Gender",
+        "value": "Male",
+        "default_rate_disparity": 0.012572811759416103,
+        "prediction_disparity": 0.0019823643769899535
+      },
+      {
+        "count": 2293,
+        "default_rate": 0.16572176188399476,
+        "mean_predicted_prob": 0.41792873438202727,
+        "roc_auc": 0.7661154978402619,
+        "attribute": "Gender",
+        "value": "Female",
+        "default_rate_disparity": 0.012572811759416103,
+        "prediction_disparity": 0.0019823643769899535
+      }
+    ],
+    "Employment_Status": [
+      {
+        "count": 1387,
+        "default_rate": 0.17015140591204037,
+        "mean_predicted_prob": 0.4200918852756042,
+        "roc_auc": 0.7892105611921836,
+        "attribute": "Employment_Status",
+        "value": "Employed - Private",
+        "default_rate_disparity": 0.12735918151190434,
+        "prediction_disparity": 0.1769304336916645
+      },
+      {
+        "count": 1254,
+        "default_rate": 0.18341307814992025,
+        "mean_predicted_prob": 0.426659476338542,
+        "roc_auc": 0.7946713654891303,
+        "attribute": "Employment_Status",
+        "value": "Self-Employed",
+        "default_rate_disparity": 0.12735918151190434,
+        "prediction_disparity": 0.1769304336916645
+      },
+      {
+        "count": 1026,
+        "default_rate": 0.15009746588693956,
+        "mean_predicted_prob": 0.39131792904081975,
+        "roc_auc": 0.736253425473609,
+        "attribute": "Employment_Status",
+        "value": "Business Owner",
+        "default_rate_disparity": 0.12735918151190434,
+        "prediction_disparity": 0.1769304336916645
+      },
+      {
+        "count": 1086,
+        "default_rate": 0.1703499079189687,
+        "mean_predicted_prob": 0.41055567714359836,
+        "roc_auc": 0.754063053064163,
+        "attribute": "Employment_Status",
+        "value": "Employed - Government",
+        "default_rate_disparity": 0.12735918151190434,
+        "prediction_disparity": 0.1769304336916645
+      },
+      {
+        "count": 173,
+        "default_rate": 0.2774566473988439,
+        "mean_predicted_prob": 0.5682483627324842,
+        "roc_auc": 0.7488333333333334,
+        "attribute": "Employment_Status",
+        "value": "Unemployed",
+        "default_rate_disparity": 0.12735918151190434,
+        "prediction_disparity": 0.1769304336916645
+      }
+    ],
+    "Customer_Segment": [
+      {
+        "count": 1750,
+        "default_rate": 0.18114285714285713,
+        "mean_predicted_prob": 0.42384800290839925,
+        "roc_auc": 0.7668454919088367,
+        "attribute": "Customer_Segment",
+        "value": "Salaried Mass Market",
+        "default_rate_disparity": 0.14345251459362368,
+        "prediction_disparity": 0.1798836354118823
+      },
+      {
+        "count": 1270,
+        "default_rate": 0.1826771653543307,
+        "mean_predicted_prob": 0.4264860550178011,
+        "roc_auc": 0.7959687063982459,
+        "attribute": "Customer_Segment",
+        "value": "Self-Employed",
+        "default_rate_disparity": 0.14345251459362368,
+        "prediction_disparity": 0.1798836354118823
+      },
+      {
+        "count": 1045,
+        "default_rate": 0.1492822966507177,
+        "mean_predicted_prob": 0.39156280127705995,
+        "roc_auc": 0.7368982723313433,
+        "attribute": "Customer_Segment",
+        "value": "SME",
+        "default_rate_disparity": 0.14345251459362368,
+        "prediction_disparity": 0.1798836354118823
+      },
+      {
+        "count": 544,
+        "default_rate": 0.10845588235294118,
+        "mean_predicted_prob": 0.35496378171020554,
+        "roc_auc": 0.7452385112703128,
+        "attribute": "Customer_Segment",
+        "value": "Salaried Premium",
+        "default_rate_disparity": 0.14345251459362368,
+        "prediction_disparity": 0.1798836354118823
+      },
+      {
+        "count": 393,
+        "default_rate": 0.25190839694656486,
+        "mean_predicted_prob": 0.5348474171220878,
+        "roc_auc": 0.7726242011956298,
+        "attribute": "Customer_Segment",
+        "value": "Youth/Student",
+        "default_rate_disparity": 0.14345251459362368,
+        "prediction_disparity": 0.1798836354118823
+      }
+    ],
+    "Education_Level": [
+      {
+        "count": 1756,
+        "default_rate": 0.18052391799544418,
+        "mean_predicted_prob": 0.4188793043061091,
+        "roc_auc": 0.7694530244671314,
+        "attribute": "Education_Level",
+        "value": "Secondary",
+        "default_rate_disparity": 0.02699694704108732,
+        "prediction_disparity": 0.028321658264157
+      },
+      {
+        "count": 1497,
+        "default_rate": 0.16566466265865062,
+        "mean_predicted_prob": 0.43123923701217165,
+        "roc_auc": 0.7766083834809784,
+        "attribute": "Education_Level",
+        "value": "Tertiary/College",
+        "default_rate_disparity": 0.02699694704108732,
+        "prediction_disparity": 0.028321658264157
+      },
+      {
+        "count": 1267,
+        "default_rate": 0.17679558011049723,
+        "mean_predicted_prob": 0.40291757874801465,
+        "roc_auc": 0.7633842966716887,
+        "attribute": "Education_Level",
+        "value": "University",
+        "default_rate_disparity": 0.02699694704108732,
+        "prediction_disparity": 0.028321658264157
+      },
+      {
+        "count": 482,
+        "default_rate": 0.15352697095435686,
+        "mean_predicted_prob": 0.42372611210307753,
+        "roc_auc": 0.8015699523052464,
+        "attribute": "Education_Level",
+        "value": "Primary",
+        "default_rate_disparity": 0.02699694704108732,
+        "prediction_disparity": 0.028321658264157
+      }
+    ]
+  },
+  "overall_disparities": {
+    "Gender": {
+      "default_rate_disparity": 0.012572811759416103,
+      "prediction_disparity": 0.0019823643769899535
+    },
+    "Employment_Status": {
+      "default_rate_disparity": 0.12735918151190434,
+      "prediction_disparity": 0.1769304336916645
+    },
+    "Customer_Segment": {
+      "default_rate_disparity": 0.14345251459362368,
+      "prediction_disparity": 0.1798836354118823
+    },
+    "Education_Level": {
+      "default_rate_disparity": 0.02699694704108732,
+      "prediction_disparity": 0.028321658264157
+    }
+  }
+}

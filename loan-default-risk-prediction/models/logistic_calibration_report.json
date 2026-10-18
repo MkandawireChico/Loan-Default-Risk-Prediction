@@ -1,0 +1,206 @@
+{
+  "uncalibrated": {
+    "calibration": {
+      "brier_score": 0.1894403325181996,
+      "log_loss": 0.5635169500157604,
+      "bin_statistics": [
+        {
+          "bin": 0,
+          "bin_lower": 0.0,
+          "bin_upper": 0.1,
+          "count": 186,
+          "predicted_prob": 0.07102302740466813,
+          "observed_rate": 0.010752688172043012,
+          "calibration_error": 0.06027033923262512
+        },
+        {
+          "bin": 1,
+          "bin_lower": 0.1,
+          "bin_upper": 0.2,
+          "count": 854,
+          "predicted_prob": 0.1556080909217272,
+          "observed_rate": 0.03981264637002342,
+          "calibration_error": 0.11579544455170378
+        },
+        {
+          "bin": 2,
+          "bin_lower": 0.2,
+          "bin_upper": 0.30000000000000004,
+          "count": 846,
+          "predicted_prob": 0.24938484311180853,
+          "observed_rate": 0.08037825059101655,
+          "calibration_error": 0.16900659252079198
+        },
+        {
+          "bin": 3,
+          "bin_lower": 0.30000000000000004,
+          "bin_upper": 0.4,
+          "count": 759,
+          "predicted_prob": 0.3481043247409172,
+          "observed_rate": 0.11067193675889328,
+          "calibration_error": 0.2374323879820239
+        },
+        {
+          "bin": 4,
+          "bin_lower": 0.4,
+          "bin_upper": 0.5,
+          "count": 655,
+          "predicted_prob": 0.44781731054620205,
+          "observed_rate": 0.1480916030534351,
+          "calibration_error": 0.29972570749276695
+        },
+        {
+          "bin": 5,
+          "bin_lower": 0.5,
+          "bin_upper": 0.6000000000000001,
+          "count": 507,
+          "predicted_prob": 0.5483955382411366,
+          "observed_rate": 0.1854043392504931,
+          "calibration_error": 0.3629911989906435
+        },
+        {
+          "bin": 6,
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.7000000000000001,
+          "count": 448,
+          "predicted_prob": 0.6490359323303798,
+          "observed_rate": 0.265625,
+          "calibration_error": 0.3834109323303798
+        },
+        {
+          "bin": 7,
+          "bin_lower": 0.7000000000000001,
+          "bin_upper": 0.8,
+          "count": 345,
+          "predicted_prob": 0.747581794965484,
+          "observed_rate": 0.3855072463768116,
+          "calibration_error": 0.36207454858867244
+        },
+        {
+          "bin": 8,
+          "bin_lower": 0.8,
+          "bin_upper": 0.9,
+          "count": 249,
+          "predicted_prob": 0.8444091524810249,
+          "observed_rate": 0.4779116465863454,
+          "calibration_error": 0.3664975058946795
+        },
+        {
+          "bin": 9,
+          "bin_lower": 0.9,
+          "bin_upper": 1.0,
+          "count": 153,
+          "predicted_prob": 0.9428812403261494,
+          "observed_rate": 0.738562091503268,
+          "calibration_error": 0.20431914882288138
+        }
+      ]
+    },
+    "roc_auc": 0.7719255858903116,
+    "gini": 0.5438511717806231,
+    "ks_statistic": 0.40368394815899883,
+    "ks_threshold": 0.4902954035628612
+  },
+  "calibrated": {
+    "calibration": {
+      "brier_score": 0.11801409466082427,
+      "log_loss": 0.3835671691609379,
+      "bin_statistics": [
+        {
+          "bin": 0,
+          "bin_lower": 0.0,
+          "bin_upper": 0.1,
+          "count": 2160,
+          "predicted_prob": 0.057887800169689516,
+          "observed_rate": 0.05925925925925926,
+          "calibration_error": 0.001371459089569746
+        },
+        {
+          "bin": 1,
+          "bin_lower": 0.1,
+          "bin_upper": 0.2,
+          "count": 1379,
+          "predicted_prob": 0.14245936102723156,
+          "observed_rate": 0.14213197969543148,
+          "calibration_error": 0.0003273813318000751
+        },
+        {
+          "bin": 2,
+          "bin_lower": 0.2,
+          "bin_upper": 0.30000000000000004,
+          "count": 634,
+          "predicted_prob": 0.24448459385192275,
+          "observed_rate": 0.23817034700315456,
+          "calibration_error": 0.00631424684876819
+        },
+        {
+          "bin": 3,
+          "bin_lower": 0.30000000000000004,
+          "bin_upper": 0.4,
+          "count": 342,
+          "predicted_prob": 0.3422586930956144,
+          "observed_rate": 0.34502923976608185,
+          "calibration_error": 0.002770546670467444
+        },
+        {
+          "bin": 4,
+          "bin_lower": 0.4,
+          "bin_upper": 0.5,
+          "count": 215,
+          "predicted_prob": 0.44603681902946307,
+          "observed_rate": 0.4697674418604651,
+          "calibration_error": 0.023730622831002024
+        },
+        {
+          "bin": 5,
+          "bin_lower": 0.5,
+          "bin_upper": 0.6000000000000001,
+          "count": 108,
+          "predicted_prob": 0.5479345676414069,
+          "observed_rate": 0.4722222222222222,
+          "calibration_error": 0.0757123454191847
+        },
+        {
+          "bin": 6,
+          "bin_lower": 0.6000000000000001,
+          "bin_upper": 0.7000000000000001,
+          "count": 68,
+          "predicted_prob": 0.6523211543445915,
+          "observed_rate": 0.6176470588235294,
+          "calibration_error": 0.03467409552106204
+        },
+        {
+          "bin": 7,
+          "bin_lower": 0.7000000000000001,
+          "bin_upper": 0.8,
+          "count": 52,
+          "predicted_prob": 0.7455550520008344,
+          "observed_rate": 0.7115384615384616,
+          "calibration_error": 0.03401659046237282
+        },
+        {
+          "bin": 8,
+          "bin_lower": 0.8,
+          "bin_upper": 0.9,
+          "count": 34,
+          "predicted_prob": 0.8474260858360857,
+          "observed_rate": 0.8823529411764706,
+          "calibration_error": 0.034926855340384866
+        },
+        {
+          "bin": 9,
+          "bin_lower": 0.9,
+          "bin_upper": 1.0,
+          "count": 10,
+          "predicted_prob": 0.9461565743572115,
+          "observed_rate": 0.9,
+          "calibration_error": 0.04615657435721143
+        }
+      ]
+    },
+    "roc_auc": 0.7719605807124779,
+    "gini": 0.5439211614249557,
+    "ks_statistic": 0.4028605312093207,
+    "ks_threshold": 0.1848794008428794
+  }
+}
