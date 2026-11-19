@@ -25,6 +25,10 @@ jobs:
           ruff check api migrations src/models/schema.py scripts/train_model_v2.py scripts/run_temporal_validation.py scripts/smoke_test.py tests/test_api.py tests/test_model_governance.py tests/test_migrations.py tests/test_deployment_config.py tests/test_temporal_validation.py
       - name: Run automated tests
         run: pytest tests/ --cov=src --cov-report=xml
+      - name: Execute synthetic chronological experiment
+        run: |
+          python scripts/run_temporal_validation.py --output-dir /tmp/temporal-validation-smoke
+          python -c "import json; p=json.load(open('/tmp/temporal-validation-smoke/temporal_validation_report.json')); assert p['partitions']['train']['end'] < p['partitions']['validation']['start']; assert p['partitions']['validation']['end'] < p['partitions']['test']['start']; assert len(p['monthly_future_test_diagnostics']) >= 5"
 
   frontend-build:
     runs-on: ubuntu-latest
