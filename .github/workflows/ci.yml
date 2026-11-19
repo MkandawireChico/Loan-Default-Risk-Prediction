@@ -28,7 +28,7 @@ jobs:
       - name: Execute synthetic chronological experiment
         run: |
           python scripts/run_temporal_validation.py --output-dir /tmp/temporal-validation-smoke
-          python -c "import json; p=json.load(open('/tmp/temporal-validation-smoke/temporal_validation_report.json')); assert p['partitions']['train']['end'] < p['partitions']['validation']['start']; assert p['partitions']['validation']['end'] < p['partitions']['test']['start']; assert len(p['monthly_future_test_diagnostics']) >= 5"
+          python -c "import json; p=json.load(open('/tmp/temporal-validation-smoke/temporal_validation_report.json')); assert p['partitions']['train']['end'] < p['partitions']['validation']['start']; assert p['partitions']['validation']['end'] < p['partitions']['test']['start']; assert len(p['model_comparison']['calibrated_logistic_regression']['monthly_future_test_diagnostics']) >= 5; assert {'prior_baseline', 'calibrated_logistic_regression', 'calibrated_random_forest'} <= set(p['model_comparison'])"
 
   frontend-build:
     runs-on: ubuntu-latest
