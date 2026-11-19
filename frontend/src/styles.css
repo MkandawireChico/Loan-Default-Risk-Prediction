@@ -21,3 +21,26 @@
 .temporal-month-heading {
   margin-top: 20px;
 }
+
+
+.drift-summary {
+  margin: 18px 0 22px;
+  padding: 18px;
+  border: 1px solid var(--border, #dfe5ee);
+  border-radius: 14px;
+  background: var(--surface, #fff);
+}
+.drift-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: capitalize;
+  background: #edf1f6;
+  color: #4b5b70;
+}
+.drift-high { background: #fff0ed; color: #a33b2d; }
+.drift-moderate { background: #fff6e5; color: #8c5b12; }
+.drift-low { background: #eaf6f0; color: #236a4b; }
