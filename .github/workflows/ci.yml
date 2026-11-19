@@ -22,7 +22,7 @@ jobs:
           pip install -r requirements-api.txt pytest pytest-cov ruff
       - name: Lint new platform modules
         run: |
-          ruff check api migrations src/models/schema.py scripts/train_model_v2.py scripts/run_temporal_validation.py scripts/smoke_test.py tests/test_api.py tests/test_model_governance.py tests/test_migrations.py tests/test_deployment_config.py tests/test_temporal_validation.py
+          ruff check api migrations src/models/schema.py src/monitoring scripts/train_model_v2.py scripts/run_temporal_validation.py scripts/smoke_test.py tests/test_api.py tests/test_model_governance.py tests/test_drift_monitoring.py tests/test_migrations.py tests/test_deployment_config.py tests/test_temporal_validation.py
       - name: Run automated tests
         run: pytest tests/ --cov=src --cov-report=xml
       - name: Execute synthetic chronological experiment
