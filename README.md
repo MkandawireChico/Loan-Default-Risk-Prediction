@@ -100,6 +100,7 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements-api.txt
 python scripts/train_model_v2.py --output-dir models/v2
+python scripts/run_temporal_validation.py --output-dir models/temporal
 alembic upgrade head
 uvicorn api.main:app --reload
 ```
@@ -163,7 +164,8 @@ The synthetic target is generated from a probabilistic risk function. The result
 |---|---|---|
 | GET | `/health` | API, model and portfolio readiness |
 | GET | `/api/v1/model` | Model metadata and feature governance |
-| GET | `/api/v1/model/evaluation` | Held-out metrics and subgroup diagnostics |
+| GET | `/api/v1/model/evaluation` | Held-out metrics, bootstrap intervals, calibration bins and subgroup diagnostics |
+| GET | `/api/v1/model/temporal-evaluation` | Future-window synthetic comparison of baseline, logistic and random forest models |
 | GET | `/api/v1/model/registry` | Registered model versions, artifact fingerprints and active status |
 | GET | `/api/v1/portfolio/summary` | Synthetic portfolio summary |
 | GET | `/api/v1/portfolio/breakdowns` | Branch, segment and loan-purpose summaries |
