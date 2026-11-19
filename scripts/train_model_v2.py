@@ -42,6 +42,7 @@ sys.path.insert(0, str(ROOT))
 
 from src.features.engineering import engineer_all_features  # noqa: E402
 from src.models.schema import get_inference_feature_columns  # noqa: E402
+from src.monitoring.drift import build_reference_profile  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger("train_v2")
@@ -409,6 +410,9 @@ def main():
     calibrated.fit(x_train, y_train)
 
     validation_probabilities = calibrated.predict_proba(x_validation)[:, 1]
+    monitoring_reference = build_reference_profile(
+        x_train, numeric, categorical, prediction_probabilities=validation_probabilities
+    )
     candidates = threshold_table(y_validation.to_numpy(), validation_probabilities)
 
     # Choose the highest-recall threshold within the stated operational review capacity.
@@ -494,6 +498,7 @@ def main():
         "dataset_rows_after_exact_deduplication": int(len(raw)),
         "partition_sizes": report["partition_sizes"],
         "synthetic_data": True,
+        "monitoring_reference": monitoring_reference,
     }
     metadata_path = args.output_dir / "metadata.json"
     metadata_path.write_text(json.dumps(metadata, indent=2), encoding="utf-8")
