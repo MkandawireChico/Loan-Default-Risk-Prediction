@@ -67,6 +67,7 @@ Nyanja Credit Risk Intelligence: Building a Responsible, End-to-End Credit Risk 
 
 12. **Next steps**
     - Extend the chronological benchmark to gradient boosting and additional baselines under a shared evaluation protocol.
+    - Add durable model artifact storage, integrity verification on load and controlled rollback.
     - Add deeper monitoring, explanation stability and model-risk reporting.
     - Improve monitoring and model documentation.
     - Deploy a public demo and prepare a reproducible technical report.
