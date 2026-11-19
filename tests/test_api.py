@@ -168,3 +168,15 @@ def test_audit_repository_stores_only_prediction_metadata():
     assert summary["risk_band_counts"] == {"Moderate": 1}
     assert "applicant_features" not in summary["stored_fields"]
     engine.dispose()
+
+
+def test_database_url_normalisation_uses_psycopg_three():
+    from api.db import normalize_database_url
+
+    assert normalize_database_url("postgres://user:pass@host/db") == (
+        "postgresql+psycopg://user:pass@host/db"
+    )
+    assert normalize_database_url("postgresql://user:pass@host/db") == (
+        "postgresql+psycopg://user:pass@host/db"
+    )
+    assert normalize_database_url("sqlite:///local.db") == "sqlite:///local.db"
