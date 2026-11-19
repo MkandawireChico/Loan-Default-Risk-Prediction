@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from api.models import AssessmentAudit
 
+
 def normalize_database_url(url: str) -> str:
     """Use the installed Psycopg 3 driver for PostgreSQL connection URLs."""
     if url.startswith("postgres://"):
