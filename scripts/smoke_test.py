@@ -49,6 +49,10 @@ def main() -> None:
     assert evaluation["calibration_diagnostics"]["bins"]
     assert evaluation["final_test_confidence_intervals"]["roc_auc"]["lower_95"] <= evaluation["final_test_confidence_intervals"]["roc_auc"]["upper_95"]
 
+    temporal = request_json(f"{base}/api/v1/model/temporal-evaluation")
+    assert temporal["partitions"]["test"]["rows"] > 0
+    assert {"prior_baseline", "calibrated_logistic_regression", "calibrated_random_forest"} <= set(temporal["model_comparison"])
+
     sample = request_json(f"{base}/api/v1/assessments/sample")
     features = sample["features"]
     scored = request_json(
@@ -75,6 +79,7 @@ def main() -> None:
                 "portfolio_applications": portfolio["applications"],
                 "held_out_test_size": evaluation["final_test"]["sample_size"],
                 "registered_model_versions": len(registry["versions"]),
+                "temporal_model_families": len(temporal["model_comparison"]),
                 "single_assessment": scored["risk_band"],
                 "batch_scored": batch["scored"],
                 "audit_records": audit["assessments_recorded"],
