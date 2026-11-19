@@ -8,7 +8,7 @@ from typing import Any
 from sqlalchemy import Integer, create_engine, func, inspect, select
 from sqlalchemy.orm import Session, sessionmaker
 
-from api.models import AssessmentAudit, Base
+from api.models import AssessmentAudit
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./nyanja_credit_risk.db")
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
