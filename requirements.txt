@@ -16,3 +16,5 @@ ruff>=0.1
 shap>=0.42
 streamlit>=1.28
 sqlalchemy>=2.0
+fastapi>=0.110
+uvicorn[standard]>=0.27

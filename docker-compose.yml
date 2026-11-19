@@ -1,0 +1,48 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: nyanja-credit-risk-db
+    environment:
+      POSTGRES_DB: nyanja_credit_risk
+      POSTGRES_USER: nyanja
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-nyanja_local_dev_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nyanja -d nyanja_credit_risk"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: nyanja-credit-risk-api
+    environment:
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:8080}
+      DATABASE_URL: postgresql+psycopg://nyanja:${POSTGRES_PASSWORD:-nyanja_local_dev_password}@db:5432/nyanja_credit_risk
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+    container_name: nyanja-credit-risk-web
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

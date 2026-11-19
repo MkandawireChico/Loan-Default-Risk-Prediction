@@ -1,0 +1,36 @@
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /app
+
+RUN addgroup --system app && adduser --system --ingroup app app
+
+COPY requirements-api.txt ./requirements-api.txt
+RUN pip install --upgrade pip && pip install -r requirements-api.txt
+
+COPY api ./api
+COPY src ./src
+COPY migrations ./migrations
+COPY alembic.ini ./alembic.ini
+COPY scripts/train_model_v2.py ./scripts/train_model_v2.py
+COPY scripts/run_temporal_validation.py ./scripts/run_temporal_validation.py
+COPY scripts/start_api.sh ./scripts/start_api.sh
+COPY data/raw/loan_applications_synthetic.csv ./data/raw/loan_applications_synthetic.csv
+COPY data/processed/loan_applications_clean.csv ./data/processed/loan_applications_clean.csv
+
+# Build a reproducible demonstration model from the committed synthetic data.
+RUN python scripts/train_model_v2.py --output-dir models/v2 \
+    && python scripts/run_temporal_validation.py --output-dir models/temporal
+
+RUN chown -R app:app /app
+USER app
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=120s --retries=3 \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"
+
+CMD ["sh", "scripts/start_api.sh"]
