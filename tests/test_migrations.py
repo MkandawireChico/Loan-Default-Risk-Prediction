@@ -41,6 +41,8 @@ def test_initial_audit_migration_is_reversible(tmp_path, monkeypatch):
     try:
         inspector = inspect(engine)
         assert not inspector.has_table("assessment_audit")
-        assert not inspector.has_table("alembic_version")
+        assert inspector.has_table("alembic_version")
+        with engine.connect() as connection:
+            assert connection.exec_driver_sql("SELECT COUNT(*) FROM alembic_version").scalar_one() == 0
     finally:
         engine.dispose()
