@@ -5,7 +5,7 @@ from __future__ import annotations
 import os
 from typing import Any
 
-from sqlalchemy import Integer, create_engine, func, select
+from sqlalchemy import Integer, create_engine, func, inspect, select
 from sqlalchemy.orm import Session, sessionmaker
 
 from api.models import AssessmentAudit, Base
@@ -17,7 +17,16 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 
 def init_db() -> None:
-    Base.metadata.create_all(bind=engine)
+    """Verify that the versioned database schema has been applied.
+
+    Schema creation is managed by Alembic migrations. The application must not
+    silently create or mutate production tables during startup.
+    """
+    with engine.connect() as connection:
+        if not inspect(connection).has_table("alembic_version"):
+            raise RuntimeError("Database migrations have not been applied. Run 'alembic upgrade head'.")
+        if not inspect(connection).has_table(AssessmentAudit.__tablename__):
+            raise RuntimeError("The assessment audit table is missing. Check the Alembic migration state.")
 
 
 def record_assessment(
