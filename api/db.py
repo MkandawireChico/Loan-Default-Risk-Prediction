@@ -5,9 +5,10 @@ from __future__ import annotations
 import os
 from typing import Any
 
-from api.models import AssessmentAudit
 from sqlalchemy import Integer, create_engine, func, inspect, select
 from sqlalchemy.orm import Session, sessionmaker
+
+from api.models import AssessmentAudit
 
 
 def normalize_database_url(url: str) -> str:
