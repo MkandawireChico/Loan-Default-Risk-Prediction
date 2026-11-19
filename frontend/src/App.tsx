@@ -25,6 +25,8 @@ type Contribution = { feature: string; contribution_log_odds: number };
 type Assessment = { model_version: string; probability_of_default: number; risk_band: string; review_flag: boolean; interpretation: string; disclaimer: string; explanation?: { method: string; scale: string; risk_increasing: Contribution[]; risk_decreasing: Contribution[]; warning: string } };
 type GroupAuditRow = { group: string; sample_size: number; suppressed: boolean; observed_default_rate?: number; model_review_rate?: number; recall?: number | null; false_positive_rate?: number | null; precision?: number | null };
 type EvalReport = { subgroup_diagnostics?: { minimum_group_size: number; groups: Record<string, GroupAuditRow[]>; interpretation: string }; final_test?: { sample_size: number; default_rate: number; roc_auc: number; pr_auc: number; brier_score: number; log_loss: number; threshold: number; precision: number; recall: number; f1: number; specificity: number; review_rate: number; confusion_matrix: Record<string, number> }; threshold_selection?: { review_capacity: number; selected_validation_operating_point: { threshold: number; precision: number; recall: number; review_rate: number } }; limitations?: string[] };
+type RegistryVersion = { model_version: string; model_type: string; status: string; artifact_path: string; artifact_sha256: string; dataset_sha256: string; training_rows: number | null; training_seed: number | null; decision_threshold: number | null; registered_at: string; final_test: Record<string, number> };
+type RegistryResponse = { active_version: string; versions: RegistryVersion[]; data_notice: string };
 
 async function getJson<T>(path: string): Promise<T> {
   const response = await fetch(`${API}${path}`);
@@ -48,6 +50,7 @@ export default function App() {
   const [breakdowns, setBreakdowns] = useState<{ by_branch: Group[]; by_customer_segment: Group[]; by_loan_purpose: Group[] } | null>(null);
   const [model, setModel] = useState<ModelInfo | null>(null);
   const [evaluation, setEvaluation] = useState<EvalReport | null>(null);
+  const [registry, setRegistry] = useState<RegistryResponse | null>(null);
   const [apiStatus, setApiStatus] = useState<"checking" | "online" | "offline">("checking");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -62,15 +65,16 @@ export default function App() {
   const refresh = useCallback(async () => {
     setLoading(true); setError("");
     try {
-      const [health, s, b, m, e] = await Promise.all([
+      const [health, s, b, m, e, r] = await Promise.all([
         getJson<{ status: string }>("/health"),
         getJson<Summary>("/api/v1/portfolio/summary"),
         getJson<typeof breakdowns>("/api/v1/portfolio/breakdowns"),
         getJson<ModelInfo>("/api/v1/model"),
         getJson<EvalReport>("/api/v1/model/evaluation"),
+        getJson<RegistryResponse>("/api/v1/model/registry"),
       ]);
       setApiStatus(health.status === "ok" ? "online" : "offline");
-      setSummary(s); setBreakdowns(b); setModel(m); setEvaluation(e);
+      setSummary(s); setBreakdowns(b); setModel(m); setEvaluation(e); setRegistry(r);
     } catch (err) {
       setApiStatus("offline"); setError(err instanceof Error ? err.message : "Unable to load platform data.");
     } finally { setLoading(false); }
@@ -250,6 +254,7 @@ export default function App() {
               <div className="governance-grid"><div className="panel"><div className="panel-heading"><div><h3>Operating point</h3><p>Final test metrics at the validation-selected threshold</p></div></div><div className="operating-list"><MetricRow label="Precision" value={percent(evaluation.final_test.precision)}/><MetricRow label="Recall" value={percent(evaluation.final_test.recall)}/><MetricRow label="Specificity" value={percent(evaluation.final_test.specificity)}/><MetricRow label="F1 score" value={evaluation.final_test.f1.toFixed(3)}/><MetricRow label="Review rate" value={percent(evaluation.final_test.review_rate)}/></div></div><div className="panel"><div className="panel-heading"><div><h3>Confusion matrix</h3><p>Held-out classification counts</p></div></div><div className="confusion-grid"><div className="confusion-cell tn"><span>True negatives</span><strong>{evaluation.final_test.confusion_matrix.true_negatives.toLocaleString()}</strong></div><div className="confusion-cell fp"><span>False positives</span><strong>{evaluation.final_test.confusion_matrix.false_positives.toLocaleString()}</strong></div><div className="confusion-cell fn"><span>False negatives</span><strong>{evaluation.final_test.confusion_matrix.false_negatives.toLocaleString()}</strong></div><div className="confusion-cell tp"><span>True positives</span><strong>{evaluation.final_test.confusion_matrix.true_positives.toLocaleString()}</strong></div></div></div></div>
               <div className="panel governance-panel"><div className="panel-heading"><div><h3>Feature governance</h3><p>Demographic attributes excluded from predictive model inputs</p></div><ShieldCheck size={19} className="green-icon"/></div><div className="audit-tags">{(model?.excluded_demographic_fields || []).map(f=><span key={f}>{f.replace(/_/g," ")}</span>)}</div><p className="governance-copy">These fields remain in the synthetic dataset for descriptive and post-hoc fairness analysis. Excluding direct demographic fields does not guarantee fairness. Proxy variables and differences in data quality still require investigation.</p></div>
               {evaluation.subgroup_diagnostics && <div className="panel governance-panel"><div className="panel-heading"><div><h3>Subgroup performance diagnostics</h3><p>Observed outcomes and model error rates across selected groups</p></div><Users size={18} className="green-icon"/></div><div className="table-scroll"><table><thead><tr><th>Dimension</th><th>Group</th><th>Sample</th><th>Observed default</th><th>Model review rate</th><th>Recall</th><th>False positive rate</th></tr></thead><tbody>{Object.entries(evaluation.subgroup_diagnostics.groups).flatMap(([dimension, rows]) => rows.map((row, index) => <tr key={dimension + row.group}><td>{index === 0 ? dimension.replace(/_/g, " ") : ""}</td><td>{row.group}</td><td>{row.sample_size}</td><td>{row.suppressed ? "Suppressed" : percent(row.observed_default_rate || 0)}</td><td>{row.suppressed ? "—" : percent(row.model_review_rate || 0)}</td><td>{row.suppressed || row.recall == null ? "—" : percent(row.recall)}</td><td>{row.suppressed || row.false_positive_rate == null ? "—" : percent(row.false_positive_rate)}</td></tr>))}</tbody></table></div><p className="governance-copy">{evaluation.subgroup_diagnostics.interpretation} Minimum group size: {evaluation.subgroup_diagnostics.minimum_group_size}.</p></div>}
+              <div className="panel governance-panel"><div className="panel-heading"><div><h3>Model registry</h3><p>Version history, training provenance and artifact integrity fingerprints</p></div><Database size={18} className="green-icon"/></div>{registry?.versions.length ? <div className="table-scroll"><table><thead><tr><th>Version</th><th>Status</th><th>Model family</th><th>Training rows</th><th>Threshold</th><th>Test ROC-AUC</th></tr></thead><tbody>{registry.versions.map(item=><tr key={item.model_version}><td><strong>{item.model_version}</strong><div className="registry-hash">Artifact {item.artifact_sha256.slice(0, 12)}…</div><div className="registry-hash">Dataset {item.dataset_sha256.slice(0, 12)}…</div></td><td><span className={item.status === "active" ? "risk-pill risk-low" : "risk-pill risk-moderate"}>{item.status}</span></td><td>{item.model_type}</td><td>{item.training_rows?.toLocaleString() || "—"}</td><td>{item.decision_threshold == null ? "—" : percent(item.decision_threshold)}</td><td>{item.final_test?.roc_auc == null ? "—" : item.final_test.roc_auc.toFixed(3)}</td></tr>)}</tbody></table></div> : <Empty/>}<p className="governance-copy">The registry stores model metadata and SHA-256 fingerprints. Model files remain in the application image. A matching fingerprint identifies the exact artifact and source dataset used for this registered version. {registry?.data_notice}</p></div>
               <div className="panel limitations-panel"><div className="panel-heading"><div><h3>Known limitations</h3><p>Read before interpreting any model result</p></div><AlertCircle size={18} className="warning-icon"/></div><ul>{(evaluation.limitations || []).map(item=><li key={item}>{item}</li>)}</ul></div>
             </> : <div className="empty-state"><AlertCircle/><strong>Evaluation report unavailable</strong><span>Build and train the v2 model to publish held-out evaluation results.</span></div>}
           </section>}
