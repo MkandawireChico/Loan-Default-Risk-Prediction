@@ -46,6 +46,8 @@ def main() -> None:
     evaluation = request_json(f"{base}/api/v1/model/evaluation")
     assert evaluation["final_test"]["sample_size"] > 0
     assert "subgroup_diagnostics" in evaluation
+    assert evaluation["calibration_diagnostics"]["bins"]
+    assert evaluation["final_test_confidence_intervals"]["roc_auc"]["lower_95"] <= evaluation["final_test_confidence_intervals"]["roc_auc"]["upper_95"]
 
     sample = request_json(f"{base}/api/v1/assessments/sample")
     features = sample["features"]
