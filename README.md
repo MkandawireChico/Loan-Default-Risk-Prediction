@@ -28,7 +28,7 @@ The project is designed to demonstrate the end-to-end lifecycle of an applied ma
 
 ### Model governance
 - Held-out test metrics: ROC-AUC, PR-AUC, Brier score, log loss, precision, recall, specificity and F1.
-- Versioned model registry with active/archived status, artifact and dataset SHA-256 fingerprints, training metadata and held-out metric summary.
+- Lightweight model metadata registry with active/archived status, artifact and dataset SHA-256 fingerprints, training metadata and held-out metric summary. Artifact-file archival and model rollback are not implemented.
 - Validation-selected review threshold and review rate.
 - Confusion matrix.
 - Subgroup diagnostics for gender, age bands, employment status, customer segment and branch.
