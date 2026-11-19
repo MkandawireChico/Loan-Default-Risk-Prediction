@@ -25,6 +25,7 @@ from api.db import (
     register_model_version,
 )
 from src.models.schema import get_inference_feature_columns
+from src.monitoring.drift import compare_distributions
 
 ROOT = Path(__file__).resolve().parents[1]
 MODEL_PATH = Path(os.getenv("CREDIT_RISK_MODEL_PATH", ROOT / "models/v2/credit_risk_calibrated_v2.joblib"))
@@ -257,6 +258,7 @@ async def lifespan(app: FastAPI):
     metadata = json.loads(METADATA_PATH.read_text(encoding="utf-8")) if METADATA_PATH.exists() else {}
     evaluation = json.loads(EVALUATION_PATH.read_text(encoding="utf-8")) if EVALUATION_PATH.exists() else {}
     app.state.metadata = metadata
+    app.state.monitoring_reference = metadata.get("monitoring_reference")
     app.state.model_version = (
         os.getenv("CREDIT_RISK_MODEL_VERSION") or metadata.get("model_version", MODEL_VERSION)
     )
@@ -448,6 +450,54 @@ def explain_application(payload: AssessmentInput, request: Request) -> dict[str,
             source="single",
         )
     return {**assessment.model_dump(), "explanation": explanation}
+
+
+@app.post("/api/v1/monitoring/drift", tags=["Monitoring"])
+def monitor_batch_drift(payload: BatchAssessmentInput, request: Request) -> dict[str, Any]:
+    """Compare an unlabeled scoring batch with the model's training reference."""
+    model = getattr(request.app.state, "model", None)
+    reference = getattr(request.app.state, "monitoring_reference", None)
+    if model is None or reference is None:
+        raise HTTPException(status_code=503, detail="Model monitoring reference is unavailable")
+
+    valid_rows: list[dict[str, Any]] = []
+    probabilities: list[float] = []
+    errors: list[dict[str, Any]] = []
+    for index, features in enumerate(payload.applications):
+        try:
+            validated = validate_features(features)
+            frame = pd.DataFrame(
+                [validated],
+                columns=FEATURES["numeric_cols"] + FEATURES["categorical_cols"],
+            )
+            probability = float(model.predict_proba(frame)[0, 1])
+            valid_rows.append(validated)
+            probabilities.append(probability)
+        except HTTPException as exc:
+            errors.append({"row": index + 1, "status_code": exc.status_code, "detail": exc.detail})
+        except (ValueError, TypeError, KeyError):
+            errors.append({
+                "row": index + 1,
+                "status_code": 422,
+                "detail": "Feature values do not match the model schema",
+            })
+
+    if not valid_rows:
+        raise HTTPException(status_code=422, detail="No valid rows available for drift monitoring")
+    report = compare_distributions(
+        reference,
+        pd.DataFrame(valid_rows, columns=FEATURES["numeric_cols"] + FEATURES["categorical_cols"]),
+        np.asarray(probabilities, dtype=float),
+    )
+    return {
+        "model_version": request.app.state.model_version,
+        "submitted": len(payload.applications),
+        "monitored": len(valid_rows),
+        "rejected": len(errors),
+        "drift": report,
+        "errors": errors,
+        "disclaimer": DISCLAIMER,
+    }
 
 
 @app.post("/api/v1/assessments/batch", tags=["Assessments"])
