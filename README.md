@@ -28,6 +28,7 @@ The project is designed to demonstrate the end-to-end lifecycle of an applied ma
 
 ### Model governance
 - Held-out test metrics: ROC-AUC, PR-AUC, Brier score, log loss, precision, recall, specificity and F1.
+- Versioned model registry with active/archived status, artifact and dataset SHA-256 fingerprints, training metadata and held-out metric summary.
 - Validation-selected review threshold and review rate.
 - Confusion matrix.
 - Subgroup diagnostics for gender, age bands, employment status, customer segment and branch.
@@ -162,6 +163,7 @@ The synthetic target is generated from a probabilistic risk function. The result
 | GET | `/health` | API, model and portfolio readiness |
 | GET | `/api/v1/model` | Model metadata and feature governance |
 | GET | `/api/v1/model/evaluation` | Held-out metrics and subgroup diagnostics |
+| GET | `/api/v1/model/registry` | Registered model versions, artifact fingerprints and active status |
 | GET | `/api/v1/portfolio/summary` | Synthetic portfolio summary |
 | GET | `/api/v1/portfolio/breakdowns` | Branch, segment and loan-purpose summaries |
 | GET | `/api/v1/assessments/sample` | Synthetic example application |
