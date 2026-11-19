@@ -25,6 +25,7 @@ The project is designed to demonstrate the end-to-end lifecycle of an applied ma
 - CSV-based batch inference for up to 500 applications per request.
 - Row-level schema validation and error reporting.
 - Downloadable scored results.
+- Batch-level feature and prediction drift diagnostics against the model's training reference, including missingness and unseen-category rates.
 
 ### Model governance
 - Held-out test metrics: ROC-AUC, PR-AUC, Brier score, log loss, precision, recall, specificity and F1, with stratified bootstrap 95% intervals.
@@ -34,6 +35,7 @@ The project is designed to demonstrate the end-to-end lifecycle of an applied ma
 - Confusion matrix.
 - Subgroup diagnostics for gender, age bands, employment status, customer segment and branch.
 - 95% Wilson intervals and suppression of small groups.
+- Reference-based population stability monitoring with numeric and categorical PSI, missingness changes, unseen categories and prediction-probability drift.
 - Explicit model limitations and demographic feature governance.
 
 ## Architecture
