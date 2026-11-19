@@ -53,7 +53,8 @@ Nyanja Credit Risk Intelligence: Building a Responsible, End-to-End Credit Risk 
    - Inspect branch and customer-segment breakdowns.
    - Load a synthetic application, change loan and affordability inputs, and run an assessment.
    - Inspect feature contributions.
-   - Upload a synthetic batch and download results.
+   - Upload a synthetic batch, inspect scored results, and review feature and prediction drift against the training reference.
+   - Explain PSI alert bands, missingness changes, unseen categories and why a drift alert triggers investigation rather than automatic retraining.
    - Open Model Governance and inspect held-out metrics, bootstrap intervals, calibration bins and subgroup diagnostics.
    - Compare the prior baseline, calibrated Logistic Regression and calibrated Random Forest across the future synthetic test window.
 
