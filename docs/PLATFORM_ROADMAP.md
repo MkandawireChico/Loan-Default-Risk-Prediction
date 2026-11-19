@@ -85,7 +85,7 @@ The existing Streamlit dashboard remains available during the transition as a re
 - [x] Build FastAPI endpoints for health, model metadata, single assessment, batch scoring, portfolio analytics and explanations.
 - [x] Add PostgreSQL persistence for metadata-only assessment audit events.
 - [x] Add request validation, structured errors and API tests.
-- [x] Add formal Alembic migrations with upgrade/downgrade coverage.\n- [ ] Add model registry lifecycle.
+- [x] Add formal Alembic migrations with upgrade/downgrade coverage.\n- [x] Add model registry lifecycle with artifact/dataset fingerprints and version status.
 - [x] Add a separate synthetic chronological stress-test experiment with whole-month splits, expanding-window calibration, validation-only threshold selection, and month-level future-test diagnostics.
 
 ### Phase 3: Product interface
