@@ -16,12 +16,14 @@ COPY src ./src
 COPY migrations ./migrations
 COPY alembic.ini ./alembic.ini
 COPY scripts/train_model_v2.py ./scripts/train_model_v2.py
+COPY scripts/run_temporal_validation.py ./scripts/run_temporal_validation.py
 COPY scripts/start_api.sh ./scripts/start_api.sh
 COPY data/raw/loan_applications_synthetic.csv ./data/raw/loan_applications_synthetic.csv
 COPY data/processed/loan_applications_clean.csv ./data/processed/loan_applications_clean.csv
 
 # Build a reproducible demonstration model from the committed synthetic data.
-RUN python scripts/train_model_v2.py --output-dir models/v2
+RUN python scripts/train_model_v2.py --output-dir models/v2 \
+    && python scripts/run_temporal_validation.py --output-dir models/temporal
 
 RUN chown -R app:app /app
 USER app
