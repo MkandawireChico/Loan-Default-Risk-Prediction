@@ -15,7 +15,7 @@ docker compose ps
 
 Open the application at http://localhost:8080 and API documentation at http://localhost:8000/docs.
 
-The stack contains PostgreSQL, the FastAPI service and the React frontend. The API image trains the v2 calibrated demonstration model from the committed synthetic training CSV during image construction. Each training run generates a version identifier containing the UTC build time and training dataset hash prefix. The model artifact and metadata are generated inside the image. At container startup, Alembic applies pending database migrations before Uvicorn starts. PostgreSQL stores model version records, artifact and dataset fingerprints, training provenance, evaluation summaries, and metadata-only assessment audit events. Raw application features are not stored. The frontend is compiled as a static production build and served by Nginx.
+The stack contains PostgreSQL, the FastAPI service and the React frontend. The API image trains the v2 calibrated demonstration model from the committed synthetic training CSV during image construction. Each training run generates a version identifier containing the UTC build time and training dataset hash prefix. The model artifact and metadata are generated inside the image. At container startup, Alembic applies pending database migrations before Uvicorn starts. PostgreSQL stores model version records, artifact and dataset fingerprints, training provenance, evaluation summaries, and metadata-only assessment audit events. Raw application features are not stored. The registry does not archive historical model files or provide rollback; those require a separate artifact-storage phase. The frontend is compiled as a static production build and served by Nginx.
 
 To stop the stack:
 
