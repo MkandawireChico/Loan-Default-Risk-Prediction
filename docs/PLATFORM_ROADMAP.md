@@ -86,6 +86,7 @@ The existing Streamlit dashboard remains available during the transition as a re
 - [x] Add PostgreSQL persistence for metadata-only assessment audit events.
 - [x] Add request validation, structured errors and API tests.
 - [x] Add formal Alembic migrations with upgrade/downgrade coverage.\n- [ ] Add model registry lifecycle.
+- [x] Add a separate synthetic chronological stress-test experiment with whole-month splits, expanding-window calibration, validation-only threshold selection, and month-level future-test diagnostics.
 
 ### Phase 3: Product interface
 - [x] Build the React application with Portfolio Intelligence, Application Assessment, Model Governance, and Batch Analysis.
@@ -95,7 +96,7 @@ The existing Streamlit dashboard remains available during the transition as a re
 ### Phase 4: Deployment and operations
 - [x] Containerize frontend, API and PostgreSQL for local development.
 - [x] Add CI checks, environment configuration, health checks and deployment documentation.
-- [ ] Verify the full Docker Compose stack through automated end-to-end smoke tests.
+- [x] Verify the full Docker Compose stack through automated end-to-end smoke tests.
 - [x] Add a Render Blueprint for API, static frontend and managed PostgreSQL.
 - [ ] Provision hosting after reviewing service/database charges and account access.
 - [ ] Verify the live application end to end.
