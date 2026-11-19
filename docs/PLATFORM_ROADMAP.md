@@ -60,7 +60,8 @@ The existing Streamlit dashboard remains available during the transition as a re
 - Keep the existing cross-sectional dataset as a reproducible baseline.
 - [x] Add a separate synthetic chronological scenario with application dates and a documented macro-stress mechanism. This is a methodological simulation, not observed temporal validation.
 - Separate training, validation, and final test data. Keep threshold selection and calibration away from the final test set.
-- Compare a naive baseline, Logistic Regression, Random Forest, and gradient boosting.
+- [x] Compare a prior-only baseline, Logistic Regression and Random Forest under the same synthetic chronological protocol.
+- [ ] Add gradient boosting to the shared chronological benchmark.
 - Report ROC-AUC and PR-AUC alongside default-class precision, recall, F1, specificity, confusion matrices, Brier score, log loss, and calibration plots.
 - Select thresholds through explicit false-positive/false-negative cost scenarios and operational review capacity, not an arbitrary universal cutoff.
 - Assess subgroup sample sizes, uncertainty intervals, calibration, error rates, and proxy-variable risks. Do not treat one fairness statistic as proof of fairness.
