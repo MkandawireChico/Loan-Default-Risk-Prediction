@@ -99,7 +99,12 @@ def risk_band(probability: float) -> str:
     return "Elevated"
 
 
-def score_features(model: Any, values: dict[str, Any], threshold: float) -> AssessmentOutput:
+def score_features(
+    model: Any,
+    values: dict[str, Any],
+    threshold: float,
+    model_version: str = MODEL_VERSION,
+) -> AssessmentOutput:
     validated = validate_features(values)
     columns = FEATURES["numeric_cols"] + FEATURES["categorical_cols"]
     frame = pd.DataFrame([validated], columns=columns)
@@ -112,7 +117,7 @@ def score_features(model: Any, values: dict[str, Any], threshold: float) -> Asse
 
     flagged = probability >= threshold
     return AssessmentOutput(
-        model_version=MODEL_VERSION,
+        model_version=model_version,
         probability_of_default=round(probability, 6),
         risk_band=risk_band(probability),
         review_flag=flagged,
@@ -249,11 +254,14 @@ async def lifespan(app: FastAPI):
     metadata = json.loads(METADATA_PATH.read_text(encoding="utf-8")) if METADATA_PATH.exists() else {}
     evaluation = json.loads(EVALUATION_PATH.read_text(encoding="utf-8")) if EVALUATION_PATH.exists() else {}
     app.state.metadata = metadata
+    app.state.model_version = (
+        os.getenv("CREDIT_RISK_MODEL_VERSION") or metadata.get("model_version", MODEL_VERSION)
+    )
     app.state.threshold = float(os.getenv("CREDIT_RISK_THRESHOLD", metadata.get("decision_threshold", DEFAULT_THRESHOLD)))
     with SessionLocal() as session:
         register_model_version(
             session,
-            model_version=MODEL_VERSION,
+            model_version=app.state.model_version,
             model_type=metadata.get("model_type", "Unknown model type"),
             artifact_path=(
                 str(MODEL_PATH.relative_to(ROOT))
@@ -261,7 +269,7 @@ async def lifespan(app: FastAPI):
                 else str(MODEL_PATH)
             ),
             artifact_sha256=sha256_file(MODEL_PATH),
-            dataset_sha256=sha256_file(PORTFOLIO_PATH),
+            dataset_sha256=metadata.get("dataset_sha256", sha256_file(PORTFOLIO_PATH)),
             metadata=metadata,
             evaluation=evaluation,
         )
@@ -306,7 +314,7 @@ def health(request: Request) -> dict[str, Any]:
         "portfolio_loaded": data_loaded,
         "database_ready": database_ready,
         "model_registry_ready": registry_ready,
-        "model_version": MODEL_VERSION,
+        "model_version": getattr(request.app.state, "model_version", MODEL_VERSION),
     }
 
 
@@ -314,7 +322,7 @@ def health(request: Request) -> dict[str, Any]:
 def model_information(request: Request) -> dict[str, Any]:
     metadata = getattr(request.app.state, "metadata", {})
     return {
-        "model_version": MODEL_VERSION,
+        "model_version": getattr(request.app.state, "model_version", MODEL_VERSION),
         "model_type": metadata.get("model_type", "Calibrated Logistic Regression"),
         "feature_count": len(REQUIRED_FIELDS),
         "numeric_features": len(NUMERIC_FIELDS),
@@ -332,7 +340,11 @@ def model_registry(request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=503, detail="Model registry is not ready")
     with SessionLocal() as session:
         versions = get_model_registry(session)
-    return {"active_version": MODEL_VERSION, "versions": versions, "data_notice": DISCLAIMER}
+    return {
+        "active_version": getattr(request.app.state, "model_version", MODEL_VERSION),
+        "versions": versions,
+        "data_notice": DISCLAIMER,
+    }
 
 
 @app.get("/api/v1/model/evaluation", tags=["Model"])
@@ -392,7 +404,9 @@ def assess_application(payload: AssessmentInput, request: Request) -> Assessment
     model = getattr(request.app.state, "model", None)
     if model is None:
         raise HTTPException(status_code=503, detail="Model is not ready")
-    result = score_features(model, payload.features, request.app.state.threshold)
+    result = score_features(
+        model, payload.features, request.app.state.threshold, request.app.state.model_version
+    )
     with SessionLocal() as session:
         record_assessment(
             session,
@@ -410,7 +424,9 @@ def explain_application(payload: AssessmentInput, request: Request) -> dict[str,
     model = getattr(request.app.state, "model", None)
     if model is None:
         raise HTTPException(status_code=503, detail="Model is not ready")
-    assessment = score_features(model, payload.features, request.app.state.threshold)
+    assessment = score_features(
+        model, payload.features, request.app.state.threshold, request.app.state.model_version
+    )
     explanation = explain_features(model, payload.features)
     with SessionLocal() as session:
         record_assessment(
@@ -432,7 +448,9 @@ def assess_batch(payload: BatchAssessmentInput, request: Request) -> dict[str, A
     results, errors = [], []
     for index, features in enumerate(payload.applications):
         try:
-            scored = score_features(model, features, request.app.state.threshold)
+            scored = score_features(
+                model, features, request.app.state.threshold, request.app.state.model_version
+            )
             with SessionLocal() as session:
                 record_assessment(
                     session,
@@ -446,7 +464,7 @@ def assess_batch(payload: BatchAssessmentInput, request: Request) -> dict[str, A
         except HTTPException as exc:
             errors.append({"row": index + 1, "status_code": exc.status_code, "detail": exc.detail})
     return {
-        "model_version": MODEL_VERSION,
+        "model_version": request.app.state.model_version,
         "submitted": len(payload.applications),
         "scored": len(results),
         "rejected": len(errors),
