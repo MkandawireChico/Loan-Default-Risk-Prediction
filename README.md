@@ -98,8 +98,11 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements-api.txt
 python scripts/train_model_v2.py --output-dir models/v2
+alembic upgrade head
 uvicorn api.main:app --reload
 ```
+
+Apply database migrations before starting the API with `alembic upgrade head`. The API verifies the migrated schema at startup and does not create production tables automatically.
 
 The API expects the generated artifact at `models/v2/credit_risk_calibrated_v2.joblib` and the synthetic portfolio CSV at `data/raw/loan_applications_synthetic.csv`.
 
