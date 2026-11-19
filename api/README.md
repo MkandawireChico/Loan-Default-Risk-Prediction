@@ -7,6 +7,7 @@ The FastAPI service provides synthetic portfolio analytics, calibrated model inf
 ```bash
 pip install -r requirements-api.txt
 python scripts/train_model_v2.py --output-dir models/v2
+python scripts/run_temporal_validation.py --output-dir models/temporal
 uvicorn api.main:app --reload
 ```
 
@@ -16,7 +17,8 @@ The service expects the generated v2 model artifact, model metadata, synthetic r
 
 - `GET /health`: API, model, portfolio, database and model-registry readiness.
 - `GET /api/v1/model`: model version, threshold and feature governance.
-- `GET /api/v1/model/evaluation`: held-out metrics and subgroup diagnostics.
+- `GET /api/v1/model/evaluation`: held-out metrics, bootstrap intervals, calibration bins and subgroup diagnostics.
+- `GET /api/v1/model/temporal-evaluation`: synthetic chronological comparison of a prior baseline, calibrated Logistic Regression and calibrated Random Forest.
 - `GET /api/v1/model/registry`: registered model versions, active/archived status, artifact and dataset fingerprints, training metadata and final-test summary.
 - `GET /api/v1/portfolio/summary`: synthetic portfolio summary.
 - `GET /api/v1/portfolio/breakdowns`: branch, segment and purpose summaries.
