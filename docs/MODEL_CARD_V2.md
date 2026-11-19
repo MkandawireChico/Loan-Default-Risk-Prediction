@@ -2,13 +2,14 @@
 
 ## Model identity
 
-- Model version: `credit-risk-calibrated-v2`
+- Model version prefix: `credit-risk-calibrated-v2-<UTC timestamp>-<dataset hash prefix>` (the exact generated version is recorded in metadata.json)
 - Model family: Logistic Regression with sigmoid probability calibration
 - Target: `Default` (simulated binary outcome)
 - Training data: committed synthetic loan-application dataset
 - Model artifact: generated at `models/v2/credit_risk_calibrated_v2.joblib`
 - Evaluation report: generated at `models/v2/evaluation_v2.json`
 - Metadata: generated at `models/v2/metadata.json`
+- Registry: model version, training provenance, artifact SHA-256 and dataset SHA-256 are recorded in PostgreSQL on API startup
 
 ## Intended use
 
