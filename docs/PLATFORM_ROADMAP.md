@@ -89,6 +89,7 @@ The existing Streamlit dashboard remains available during the transition as a re
 - [x] Add formal Alembic migrations with upgrade/downgrade coverage.\n- [x] Add a lightweight model metadata registry with artifact/dataset fingerprints and version status.
 - [ ] Add durable artifact archival, integrity verification on load, and controlled rollback.
 - [x] Add a separate synthetic chronological stress-test experiment with whole-month splits, expanding-window calibration, validation-only threshold selection, and month-level future-test diagnostics.
+- [x] Expose the temporal comparison report through the API and Model Governance workspace.
 
 ### Phase 3: Product interface
 - [x] Build the React application with Portfolio Intelligence, Application Assessment, Model Governance, and Batch Analysis.
