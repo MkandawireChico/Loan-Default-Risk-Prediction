@@ -96,7 +96,9 @@ The existing Streamlit dashboard remains available during the transition as a re
 - [x] Containerize frontend, API and PostgreSQL for local development.
 - [x] Add CI checks, environment configuration, health checks and deployment documentation.
 - [ ] Verify the full Docker Compose stack through automated end-to-end smoke tests.
-- [ ] Deploy the public demo and verify the live application end to end.
+- [x] Add a Render Blueprint for API, static frontend and managed PostgreSQL.
+- [ ] Provision hosting after reviewing service/database charges and account access.
+- [ ] Verify the live application end to end.
 - [ ] Publish a presentation-ready case study, architecture diagram, model card, limitations and demo guide.
 
 ## Definition of done
