@@ -79,7 +79,7 @@ The existing Streamlit dashboard remains available during the transition as a re
 - Refactor training and inference into stable reusable interfaces.
 - Add strict input validation and schema contracts.
 - [x] Add temporal synthetic data only with a documented generation mechanism.
-- Add robust evaluation, calibration, threshold selection, and explainability tests.
+- [x] Add robust evaluation, calibration, threshold selection, bootstrap metric intervals, calibration-bin diagnostics and explainability tests.
 - Produce versioned model metadata and reproducible reports.
 
 ### Phase 2: API and persistence
