@@ -11,3 +11,4 @@ venv/
 node_modules/
 frontend/dist/
 models/v2/
+models/temporal/
