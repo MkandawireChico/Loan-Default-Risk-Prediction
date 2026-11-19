@@ -68,6 +68,13 @@ def main() -> None:
     assert batch["scored"] == 1
     assert batch["rejected"] == 0
 
+    drift = request_json(
+        f"{base}/api/v1/monitoring/drift", {"applications": [features]}
+    )
+    assert drift["monitored"] == 1
+    assert drift["drift"]["summary"]["features_monitored"] > 0
+    assert drift["drift"]["prediction_probability"]["psi"] is not None
+
     audit = request_json(f"{base}/api/v1/audit/summary")
     assert audit["assessments_recorded"] >= 2
     assert "applicant_features" not in audit["stored_fields"]
@@ -82,6 +89,7 @@ def main() -> None:
                 "temporal_model_families": len(temporal["model_comparison"]),
                 "single_assessment": scored["risk_band"],
                 "batch_scored": batch["scored"],
+                "drift_features_monitored": drift["drift"]["summary"]["features_monitored"],
                 "audit_records": audit["assessments_recorded"],
             },
             indent=2,
