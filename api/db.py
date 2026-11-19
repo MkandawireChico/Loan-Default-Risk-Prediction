@@ -65,7 +65,9 @@ def register_model_version(
     record.artifact_path = artifact_path
     record.artifact_sha256 = artifact_sha256
     record.dataset_sha256 = dataset_sha256
-    record.training_rows = metadata.get("dataset_rows_after_exact_deduplication")
+    record.training_rows = metadata.get(
+        "training_rows", metadata.get("dataset_rows_after_exact_deduplication")
+    )
     record.training_seed = metadata.get("random_seed")
     record.decision_threshold = metadata.get("decision_threshold")
     record.metadata_json = json.dumps(metadata, sort_keys=True)
