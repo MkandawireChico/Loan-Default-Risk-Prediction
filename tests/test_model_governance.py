@@ -1,6 +1,8 @@
 import pandas as pd
 
 from scripts.train_model_v2 import (
+    bootstrap_confidence_intervals,
+    calibration_diagnostics,
     group_diagnostics,
     prepare_partitions,
     threshold_table,
@@ -56,3 +58,30 @@ def test_group_diagnostics_suppresses_small_groups():
     rows = report["groups"]["Gender"]
     assert rows[0]["suppressed"] is False
     assert rows[1]["suppressed"] is True
+
+
+
+def test_bootstrap_metric_intervals_are_reproducible_and_bounded():
+    import numpy as np
+
+    y = np.array([0, 1] * 50)
+    probabilities = np.linspace(0.01, 0.99, 100)
+    first = bootstrap_confidence_intervals(y, probabilities, n_bootstrap=100, seed=17)
+    second = bootstrap_confidence_intervals(y, probabilities, n_bootstrap=100, seed=17)
+    assert first == second
+    for interval in first.values():
+        assert 0 <= interval["lower_95"] <= interval["upper_95"] <= 1
+        assert interval["bootstrap_replicates"] == 100
+
+
+def test_calibration_diagnostics_cover_every_record():
+    import numpy as np
+
+    y = np.array([0, 1] * 50)
+    probabilities = np.linspace(0.01, 0.99, 100)
+    report = calibration_diagnostics(y, probabilities, n_bins=10)
+    assert sum(row["applications"] for row in report["bins"]) == len(y)
+    assert 0 <= report["expected_calibration_error"] <= 1
+    assert all(
+        row["observed_default_rate_95ci"] is not None for row in report["bins"]
+    )
