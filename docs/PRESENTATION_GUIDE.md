@@ -54,7 +54,8 @@ Nyanja Credit Risk Intelligence: Building a Responsible, End-to-End Credit Risk 
    - Load a synthetic application, change loan and affordability inputs, and run an assessment.
    - Inspect feature contributions.
    - Upload a synthetic batch and download results.
-   - Open Model Governance and inspect held-out metrics and subgroup diagnostics.
+   - Open Model Governance and inspect held-out metrics, bootstrap intervals, calibration bins and subgroup diagnostics.
+   - Compare the prior baseline, calibrated Logistic Regression and calibrated Random Forest across the future synthetic test window.
 
 10. **Testing and deployment**
     - Show GitHub Actions quality checks, including execution of the synthetic chronological experiment.
