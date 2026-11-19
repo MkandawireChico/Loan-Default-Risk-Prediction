@@ -65,7 +65,8 @@ The existing Streamlit dashboard remains available during the transition as a re
 - Report ROC-AUC and PR-AUC alongside default-class precision, recall, F1, specificity, confusion matrices, Brier score, log loss, and calibration plots.
 - Select thresholds through explicit false-positive/false-negative cost scenarios and operational review capacity, not an arbitrary universal cutoff.
 - Assess subgroup sample sizes, uncertainty intervals, calibration, error rates, and proxy-variable risks. Do not treat one fairness statistic as proof of fairness.
-- Add data and prediction drift monitoring only where the simulated data supports a defensible reference distribution.
+- [x] Add training-reference numeric and categorical PSI monitoring, missingness and unseen-category diagnostics, and prediction-probability drift for unlabeled batches.
+- [ ] Add outcome-based performance monitoring once matured labels and a documented observation window are available.
 - Record seeds, package versions, dataset version, model version, and experiment configuration.
 
 ## Delivery phases
@@ -89,6 +90,7 @@ The existing Streamlit dashboard remains available during the transition as a re
 - [x] Add formal Alembic migrations with upgrade/downgrade coverage.
 - [x] Add a lightweight model metadata registry with artifact/dataset fingerprints and version status.
 - [ ] Add durable artifact archival, integrity verification on load, and controlled rollback.
+- [ ] Add monitoring history, configurable alert policies and drift investigation workflow.
 - [x] Add a separate synthetic chronological stress-test experiment with whole-month splits, expanding-window calibration, validation-only threshold selection, and month-level future-test diagnostics.
 - [x] Expose the temporal comparison report through the API and Model Governance workspace.
 
