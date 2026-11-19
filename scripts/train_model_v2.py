@@ -382,6 +382,10 @@ def main():
         "categorical_features": categorical,
         "audit_only_features": feature_groups["audit_only_cols"],
         "trained_at_utc": report["created_at_utc"],
+        "random_seed": args.seed,
+        "training_rows": int(len(train)),
+        "dataset_rows_after_exact_deduplication": int(len(raw)),
+        "partition_sizes": report["partition_sizes"],
         "synthetic_data": True,
     }
     metadata_path = args.output_dir / "metadata.json"
