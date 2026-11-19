@@ -32,6 +32,9 @@ METADATA_PATH = Path(os.getenv("CREDIT_RISK_METADATA_PATH", ROOT / "models/v2/me
 PORTFOLIO_PATH = Path(os.getenv("CREDIT_RISK_DATA_PATH", ROOT / "data/raw/loan_applications_synthetic.csv"))
 MODEL_VERSION = os.getenv("CREDIT_RISK_MODEL_VERSION", "credit-risk-calibrated-v2")
 EVALUATION_PATH = Path(os.getenv("CREDIT_RISK_EVALUATION_PATH", ROOT / "models/v2/evaluation_v2.json"))
+TEMPORAL_EVALUATION_PATH = Path(
+    os.getenv("CREDIT_RISK_TEMPORAL_EVALUATION_PATH", ROOT / "models/temporal/temporal_validation_report.json")
+)
 DEFAULT_THRESHOLD = float(os.getenv("CREDIT_RISK_THRESHOLD", "0.50"))
 
 FEATURES = get_inference_feature_columns()
@@ -352,6 +355,13 @@ def model_evaluation() -> dict[str, Any]:
     if not EVALUATION_PATH.exists():
         raise HTTPException(status_code=503, detail="Model evaluation report is unavailable")
     return json.loads(EVALUATION_PATH.read_text(encoding="utf-8"))
+
+
+@app.get("/api/v1/model/temporal-evaluation", tags=["Model"])
+def temporal_model_evaluation() -> dict[str, Any]:
+    if not TEMPORAL_EVALUATION_PATH.exists():
+        raise HTTPException(status_code=503, detail="Synthetic chronological evaluation is unavailable")
+    return json.loads(TEMPORAL_EVALUATION_PATH.read_text(encoding="utf-8"))
 
 
 @app.get("/api/v1/portfolio/summary", tags=["Portfolio"])
