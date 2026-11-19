@@ -90,3 +90,12 @@ The API stores metadata-only assessment audit events. Applicant feature values, 
 The repository also includes a separate chronological stress-test in scripts/run_temporal_validation.py. It assigns 36 synthetic months, introduces a deliberately simulated macro-stress shift in the final eight months, regenerates the synthetic outcome, and compares a prior-only baseline, calibrated Logistic Regression and calibrated Random Forest on a future time window. Whole-month partitions are used. Preprocessing caps are learned from the historical training window, calibration uses expanding-window TimeSeriesSplit folds within training, and the review threshold is selected on validation data.
 
 This experiment does not change the v2 model card identity or its cross-sectional evaluation report. It is not temporal validation against observed loan outcomes. The generated dates, stress index and labels are simulation constructs. Results must not be presented as evidence of predictive performance in Malawi or any real lending institution.
+
+
+## Monitoring and drift
+
+The training workflow stores a reference profile from the training partition. The profile includes quantile distributions for numeric model inputs, top-category distributions for categorical inputs, missingness rates, and a prediction-probability reference derived from validation predictions.
+
+The batch monitoring endpoint compares unlabeled batches with this reference using Population Stability Index (PSI). It reports per-feature PSI, missing-rate changes, unseen-category rates, and prediction-probability PSI. Conventional bands are below 0.10 (low), 0.10 to below 0.20 (moderate), and 0.20 or higher (high). These values are triage conventions, not universal thresholds.
+
+PSI detects distribution differences. It does not establish model degradation, predictive accuracy, causality, fairness or the need for retraining. Outcome-based monitoring requires reliable labels after an appropriate outcome-maturation period. The current implementation uses synthetic records only.
