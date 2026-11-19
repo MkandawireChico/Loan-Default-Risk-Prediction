@@ -149,23 +149,33 @@ def compare_distributions(
             results[name] = _numeric_drift(profile, current_frame[name])
         else:
             results[name] = _categorical_drift(profile, current_frame[name])
+    prediction_drift = None
     if prediction_probabilities is not None and "prediction_probability" in reference_profile:
-        results["__prediction_probability__"] = _numeric_drift(
+        prediction_drift = _numeric_drift(
             reference_profile["prediction_probability"],
             pd.Series(np.asarray(prediction_probabilities, dtype=float)),
         )
     feature_scores = [item["psi"] for item in results.values() if item.get("psi") is not None]
-    maximum = max(feature_scores, default=0.0)
+    all_scores = feature_scores + (
+        [prediction_drift["psi"]] if prediction_drift and prediction_drift.get("psi") is not None else []
+    )
+    maximum = max(all_scores, default=0.0)
     return {
         "method": reference_profile["method"],
         "reference_rows": reference_profile["reference_rows"],
         "current_rows": int(len(current_frame)),
         "features": results,
+        "prediction_probability": prediction_drift,
         "summary": {
             "features_monitored": len(reference_profile["features"]),
             "features_high_drift": sum(item["status"] == "high" for item in results.values()),
             "features_moderate_drift": sum(item["status"] == "moderate" for item in results.values()),
             "maximum_psi": round(float(maximum), 6),
+            "prediction_psi": (
+                round(float(prediction_drift["psi"]), 6)
+                if prediction_drift and prediction_drift.get("psi") is not None
+                else None
+            ),
             "overall_status": _severity(maximum, DEFAULT_THRESHOLDS),
         },
         "thresholds": {
