@@ -9,6 +9,7 @@ used once for final reporting. Demographic audit fields are excluded.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import logging
 import sys
@@ -275,6 +276,11 @@ def main():
         args.output_dir = ROOT / args.output_dir
 
     raw = load_dataset(args.data)
+    dataset_sha256 = hashlib.sha256(args.data.read_bytes()).hexdigest()
+    model_version = (
+        "credit-risk-calibrated-v2-"
+        f"{datetime.now(UTC).strftime('%Y%m%dT%H%M%S')}-{dataset_sha256[:8]}"
+    )
     train_raw, validation_raw, test_raw = prepare_partitions(raw, args.seed)
 
     # Learn outlier caps from training data only. Apply identical caps elsewhere.
@@ -328,6 +334,8 @@ def main():
 
     report = {
         "project": "Nyanja Credit Risk Intelligence",
+        "model_version": model_version,
+        "dataset_sha256": dataset_sha256,
         "data_notice": "Entirely synthetic demonstration data. Not evidence about real borrowers.",
         "created_at_utc": datetime.now(UTC).isoformat(),
         "random_seed": args.seed,
@@ -364,7 +372,8 @@ def main():
     report_path = args.output_dir / "evaluation_v2.json"
     report_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
     metadata = {
-        "model_version": "credit-risk-calibrated-v2",
+        "model_version": model_version,
+        "dataset_sha256": dataset_sha256,
         "model_type": "Logistic Regression with sigmoid probability calibration",
         "decision_threshold": float(threshold),
         "review_capacity_target": float(args.review_capacity),
