@@ -69,8 +69,9 @@ def test_bootstrap_metric_intervals_are_reproducible_and_bounded():
     first = bootstrap_confidence_intervals(y, probabilities, n_bootstrap=100, seed=17)
     second = bootstrap_confidence_intervals(y, probabilities, n_bootstrap=100, seed=17)
     assert first == second
-    for interval in first.values():
-        assert 0 <= interval["lower_95"] <= interval["upper_95"] <= 1
+    for metric, interval in first.items():
+        upper_bound = 1 if metric != "log_loss" else float("inf")
+        assert 0 <= interval["lower_95"] <= interval["upper_95"] <= upper_bound
         assert interval["bootstrap_replicates"] == 100
 
 
