@@ -60,6 +60,8 @@ The evaluation report includes:
 - Confusion matrix and review rate.
 - Subgroup observed default rates, review rates, recall, false-positive rates and precision.
 - 95% Wilson intervals for reported subgroup proportions.
+- Stratified bootstrap 95% intervals for held-out ROC-AUC, PR-AUC, Brier score and log loss.
+- Fixed-width calibration bins with expected calibration error and Wilson intervals for observed default rates.
 
 The threshold is a simulated operational setting. It is not a lending policy or a recommendation for real institutions.
 
