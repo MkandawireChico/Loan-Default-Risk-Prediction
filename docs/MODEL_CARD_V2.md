@@ -80,3 +80,10 @@ The application reports mean fold-wise logistic coefficient contributions on the
 ## Safety and privacy
 
 The API stores metadata-only assessment audit events. Applicant feature values, names, contact details and identifiers are not persisted by the audit layer. Do not upload real customer data.
+
+
+## Separate synthetic chronological experiment
+
+The repository also includes a separate chronological stress-test in scripts/run_temporal_validation.py. It assigns 36 synthetic months, introduces a deliberately simulated macro-stress shift in the final eight months, regenerates the synthetic outcome, and evaluates on a future time window. Whole-month partitions are used. Preprocessing caps are learned from the historical training window, calibration uses expanding-window TimeSeriesSplit folds within training, and the review threshold is selected on validation data.
+
+This experiment does not change the v2 model card identity or its cross-sectional evaluation report. It is not temporal validation against observed loan outcomes. The generated dates, stress index and labels are simulation constructs. Results must not be presented as evidence of predictive performance in Malawi or any real lending institution.
