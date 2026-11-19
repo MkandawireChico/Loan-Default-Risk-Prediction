@@ -34,6 +34,7 @@ Nyanja Credit Risk Intelligence: Building a Responsible, End-to-End Credit Risk 
    - Explain the difference between ranking and probability calibration.
    - Show Brier score, log loss and calibration outputs.
    - Explain the review-capacity constraint and its trade-offs.
+   - Compare the prior-only baseline, calibrated Logistic Regression and calibrated Random Forest on a later synthetic time window.
 
 7. **Fairness and model governance**
    - Explain demographic feature exclusion.
@@ -65,7 +66,7 @@ Nyanja Credit Risk Intelligence: Building a Responsible, End-to-End Credit Risk 
     - State clearly that the model does not make lending decisions.
 
 12. **Next steps**
-    - Benchmark model families under a shared chronological evaluation protocol.
+    - Extend the chronological benchmark to gradient boosting and additional baselines under a shared evaluation protocol.
     - Add deeper monitoring, explanation stability and model-risk reporting.
     - Improve monitoring and model documentation.
     - Deploy a public demo and prepare a reproducible technical report.
