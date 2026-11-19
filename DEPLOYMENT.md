@@ -15,13 +15,35 @@ docker compose ps
 
 Open the application at http://localhost:8080 and API documentation at http://localhost:8000/docs.
 
-The stack contains PostgreSQL, the FastAPI service and the React frontend. The API image trains the v2 calibrated demonstration model from the committed synthetic training CSV during image construction. The model artifact and metadata are generated inside the image. PostgreSQL stores metadata-only assessment audit events. Raw application features are not stored. The frontend is compiled as a static production build and served by Nginx.
+The stack contains PostgreSQL, the FastAPI service and the React frontend. The API image trains the v2 calibrated demonstration model from the committed synthetic training CSV during image construction. The model artifact and metadata are generated inside the image. At container startup, Alembic applies pending database migrations before Uvicorn starts. PostgreSQL stores metadata-only assessment audit events. Raw application features are not stored. The frontend is compiled as a static production build and served by Nginx.
 
 To stop the stack:
 
 ```bash
 docker compose down
 ```
+
+## Database migrations
+
+The schema is versioned with Alembic. For a local API process, apply migrations before startup:
+
+```bash
+alembic upgrade head
+```
+
+Inspect the current revision:
+
+```bash
+alembic current
+```
+
+Create a future migration after changing SQLAlchemy models:
+
+```bash
+alembic revision --autogenerate -m "describe schema change"
+```
+
+Review every generated migration before applying it. Do not use `Base.metadata.create_all()` as a production schema-management strategy.
 
 ## Environment configuration
 
