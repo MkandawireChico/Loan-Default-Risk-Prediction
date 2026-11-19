@@ -55,7 +55,11 @@ def build_temporal_scenario(
     rng = np.random.default_rng(seed)
     month_index = rng.integers(0, months, size=len(frame))
     day = rng.integers(1, 28, size=len(frame))
-    dates = pd.Timestamp(START_DATE) + pd.to_timedelta(month_index * 30 + day - 1, unit="D")
+    dates = pd.to_datetime({
+        "year": 2023 + month_index // 12,
+        "month": month_index % 12 + 1,
+        "day": day,
+    })
     frame["Application_Date"] = dates
     frame["Scenario_Month"] = month_index
 
