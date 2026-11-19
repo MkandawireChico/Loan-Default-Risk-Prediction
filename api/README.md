@@ -1,0 +1,34 @@
+# API service
+
+The FastAPI service provides synthetic portfolio analytics, calibrated model inference, batch scoring and model contribution explanations.
+
+## Run locally
+
+```bash
+pip install -r requirements-api.txt
+python scripts/train_model_v2.py --output-dir models/v2
+uvicorn api.main:app --reload
+```
+
+The service expects the generated v2 model artifact, model metadata, synthetic raw portfolio CSV and cleaned synthetic sample CSV.
+
+## Endpoints
+
+- `GET /health`: API, model, portfolio and database readiness.
+- `GET /api/v1/model`: model version, threshold and feature governance.
+- `GET /api/v1/model/evaluation`: held-out metrics and subgroup diagnostics.
+- `GET /api/v1/portfolio/summary`: synthetic portfolio summary.
+- `GET /api/v1/portfolio/breakdowns`: branch, segment and purpose summaries.
+- `GET /api/v1/assessments/sample`: synthetic example application.
+- `POST /api/v1/assessments`: individual inference.
+- `POST /api/v1/assessments/explain`: inference with model contribution explanation.
+- `POST /api/v1/assessments/batch`: batch inference.
+- `GET /api/v1/audit/summary`: aggregate operational assessment counts.
+
+Interactive API documentation is available at `/docs`.
+
+## Database and audit boundary
+
+SQLAlchemy stores assessment metadata in PostgreSQL in Docker Compose or SQLite during local standalone development. Audit records contain the model version, probability, risk band, review flag, request source and timestamp. Raw features, names, identifiers and contact information are not persisted.
+
+Set `DATABASE_URL` to configure the database. Do not use real customer data in this demonstration.

@@ -4,3 +4,10 @@ __pycache__/
 .DS_Store
 .venv/
 venv/
+.env
+*.db
+*.sqlite
+*.sqlite3
+node_modules/
+frontend/dist/
+models/v2/
