@@ -16,6 +16,8 @@ import joblib
 import numpy as np
 import pandas as pd
 from sklearn.calibration import CalibratedClassifierCV
+from sklearn.dummy import DummyClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import brier_score_loss, roc_auc_score
 from sklearn.model_selection import TimeSeriesSplit
 
@@ -193,24 +195,71 @@ def run_experiment(
 
     # Training rows are ordered before expanding-window calibration folds.
     train = train.sort_values("Application_Date")
-    base = build_pipeline(numeric, categorical)
-    calibrated = CalibratedClassifierCV(
-        estimator=base, method="sigmoid", cv=TimeSeriesSplit(n_splits=5)
+    validation_x, test_x = validation[features], test[features]
+    y_train = train["Default"]
+    y_validation = validation["Default"].to_numpy()
+    y_test = test["Default"].to_numpy()
+    temporal_cv = TimeSeriesSplit(n_splits=5)
+
+    logistic = CalibratedClassifierCV(
+        estimator=build_pipeline(numeric, categorical),
+        method="sigmoid",
+        cv=temporal_cv,
     )
-    calibrated.fit(train[features], train["Default"])
-
-    validation_probabilities = calibrated.predict_proba(validation[features])[:, 1]
-    candidates = threshold_table(validation["Default"].to_numpy(), validation_probabilities)
-    feasible = [row for row in candidates if row["review_rate"] <= review_capacity]
-    if not feasible:
-        raise RuntimeError("No validation threshold meets the review-capacity constraint")
-    selected = max(feasible, key=lambda row: (row["recall"], row["precision"]))
-    threshold = float(selected["threshold"])
-
-    test_probabilities = calibrated.predict_proba(test[features])[:, 1]
-    test_metrics = evaluate(test["Default"].to_numpy(), test_probabilities, threshold)
+    forest_base = build_pipeline(numeric, categorical).set_params(
+        classifier=RandomForestClassifier(
+            n_estimators=150,
+            min_samples_leaf=5,
+            class_weight="balanced_subsample",
+            random_state=seed,
+            n_jobs=-1,
+        )
+    )
+    forest = CalibratedClassifierCV(
+        estimator=forest_base,
+        method="sigmoid",
+        cv=TimeSeriesSplit(n_splits=5),
+    )
+    prior = DummyClassifier(strategy="prior")
+    candidates_by_model = {
+        "prior_baseline": prior,
+        "calibrated_logistic_regression": logistic,
+        "calibrated_random_forest": forest,
+    }
 
     output_dir.mkdir(parents=True, exist_ok=True)
+    model_comparison = {}
+    fitted_models = {}
+    for model_name, estimator in candidates_by_model.items():
+        estimator.fit(train[features], y_train)
+        validation_probabilities = estimator.predict_proba(validation_x)[:, 1]
+        threshold_candidates = threshold_table(y_validation, validation_probabilities)
+        feasible = [
+            row for row in threshold_candidates if row["review_rate"] <= review_capacity
+        ]
+        if not feasible:
+            raise RuntimeError(
+                f"No validation threshold meets the review-capacity constraint for {model_name}"
+            )
+        selected = max(feasible, key=lambda row: (row["recall"], row["precision"]))
+        threshold = float(selected["threshold"])
+        test_probabilities = estimator.predict_proba(test_x)[:, 1]
+        validation_metrics = evaluate(y_validation, validation_probabilities, threshold)
+        test_metrics = evaluate(y_test, test_probabilities, threshold)
+        model_comparison[model_name] = {
+            "validation_operating_point": selected,
+            "validation_metrics": validation_metrics,
+            "future_test_metrics": test_metrics,
+            "monthly_future_test_diagnostics": monthly_diagnostics(test, test_probabilities),
+        }
+        fitted_models[model_name] = estimator
+
+    # Keep the logistic artifact as the reference temporal model; comparisons are not
+    # used to promote a model based on the future test window.
+    calibrated = fitted_models["calibrated_logistic_regression"]
+    selected = model_comparison["calibrated_logistic_regression"]["validation_operating_point"]
+    threshold = float(selected["threshold"])
+    test_metrics = model_comparison["calibrated_logistic_regression"]["future_test_metrics"]
     model_path = output_dir / "temporal_synthetic_model.joblib"
     joblib.dump(calibrated, model_path)
     report = {
@@ -262,7 +311,12 @@ def run_experiment(
             "selected_validation_threshold": selected,
         },
         "future_test": test_metrics,
-        "monthly_future_test_diagnostics": monthly_diagnostics(test, test_probabilities),
+        "model_comparison": model_comparison,
+        "comparison_policy": (
+            "All candidate models use the same chronological partitions. Each threshold is "
+            "selected on validation data under the same review-capacity constraint. Future-test "
+            "metrics are reported for comparison only and are not used to select a winner."
+        ),
         "model_artifact": (
             str(model_path.relative_to(ROOT))
             if model_path.is_relative_to(ROOT)
