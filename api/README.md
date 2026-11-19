@@ -26,6 +26,7 @@ The service expects the generated v2 model artifact, model metadata, synthetic r
 - `POST /api/v1/assessments`: individual inference.
 - `POST /api/v1/assessments/explain`: inference with model contribution explanation.
 - `POST /api/v1/assessments/batch`: batch inference.
+- `POST /api/v1/monitoring/drift`: compare an unlabeled application batch with training-reference feature and prediction distributions.
 - `GET /api/v1/audit/summary`: aggregate operational assessment counts.
 
 Interactive API documentation is available at `/docs`.
@@ -34,4 +35,4 @@ Interactive API documentation is available at `/docs`.
 
 SQLAlchemy stores model-version metadata and assessment metadata in PostgreSQL in Docker Compose or SQLite during local standalone development. Every training run creates a unique version using its UTC build time and training dataset hash prefix. Model artifacts remain in the application filesystem; the registry stores SHA-256 fingerprints, paths, training metadata and evaluation summaries. A new version becomes active and earlier versions are archived. This is a metadata registry, not an artifact store: old model files are not preserved and rollback is not implemented. Audit records contain the model version, probability, risk band, review flag, request source and timestamp. Raw features, names, identifiers and contact information are not persisted.
 
-Set `DATABASE_URL` to configure the database. Do not use real customer data in this demonstration.
+Set `DATABASE_URL` to configure the database. Drift monitoring uses training-partition reference distributions saved with model metadata. Numeric features use quantile-binned PSI; categorical features use top-category PSI with an other bucket. Conventional alert bands are low below 0.10, moderate from 0.10 to below 0.20, and high at or above 0.20. These are investigation signals, not universal thresholds. PSI does not measure predictive accuracy, causal change or fairness. Unlabeled batches cannot support outcome-based performance monitoring. Do not use real customer data in this demonstration.
