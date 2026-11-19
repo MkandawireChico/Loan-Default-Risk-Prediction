@@ -44,6 +44,7 @@ Nyanja Credit Risk Intelligence: Building a Responsible, End-to-End Credit Risk 
    - Walk through React, FastAPI, the ML pipeline and PostgreSQL.
    - Explain the model artifact and metadata generated during the image build.
    - Explain metadata-only audit persistence.
+   - Demonstrate model registry versioning, active/archived status and artifact/dataset fingerprints.
 
 9. **Live product demonstration**
    - Open Portfolio Intelligence.
@@ -54,7 +55,7 @@ Nyanja Credit Risk Intelligence: Building a Responsible, End-to-End Credit Risk 
    - Open Model Governance and inspect held-out metrics and subgroup diagnostics.
 
 10. **Testing and deployment**
-    - Show GitHub Actions quality checks.
+    - Show GitHub Actions quality checks, including execution of the synthetic chronological experiment.
     - Explain Docker Compose services and health checks.
     - Show the deployment guide and environment configuration.
 
@@ -64,8 +65,8 @@ Nyanja Credit Risk Intelligence: Building a Responsible, End-to-End Credit Risk 
     - State clearly that the model does not make lending decisions.
 
 12. **Next steps**
-    - Formal database migrations and model registry lifecycle.
-    - Benchmark model families under a shared evaluation protocol.
+    - Benchmark model families under a shared chronological evaluation protocol.
+    - Add deeper monitoring, explanation stability and model-risk reporting.
     - Improve monitoring and model documentation.
     - Deploy a public demo and prepare a reproducible technical report.
 
