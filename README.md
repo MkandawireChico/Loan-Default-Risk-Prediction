@@ -214,21 +214,19 @@ docs/                    Platform roadmap and design documentation
 ## Current delivery status
 
 - [x] Repository audit and separate development branch.
-- [x] Platform roadmap and architecture direction.
-- [x] Governed v2 feature schema.
-- [x] Train/validation/test training workflow.
-- [x] Calibrated model training and validation threshold selection.
-- [x] Subgroup diagnostics with uncertainty intervals.
-- [x] FastAPI inference, portfolio and batch endpoints.
-- [x] Local logistic contribution explanations.
+- [x] Governed v2 feature schema and leakage-conscious training workflow.
+- [x] Calibrated model training and validation-selected review threshold.
+- [x] Subgroup diagnostics with Wilson uncertainty intervals.
+- [x] Held-out metric bootstrap intervals and probability calibration diagnostics.
+- [x] Synthetic chronological stress test with prior, calibrated Logistic Regression and calibrated Random Forest comparisons.
+- [x] FastAPI inference, portfolio, batch, registry and temporal evaluation endpoints.
 - [x] React portfolio, assessment, batch and governance workspaces.
-- [x] Dockerfiles and Docker Compose configuration.
-- [x] Python and frontend CI checks configured.
-- [x] Confirm green CI across the latest branch head.
-- [x] Run and verify the complete Docker Compose stack.
-- [x] Add PostgreSQL persistence for metadata-only assessment audit events.
-- [ ] Add formal model registry lifecycle.
-- [x] Add versioned PostgreSQL schema migrations.
+- [x] Model metadata registry with artifact and dataset fingerprints.
+- [x] Alembic migrations, PostgreSQL persistence and metadata-only assessment audit.
+- [x] Dockerfiles, Docker Compose and GitHub Actions workflows.
+- [ ] Verify green CI across the latest branch head after temporal report integration.
+- [ ] Re-verify the complete Docker Compose stack after temporal report integration.
+- [ ] Add durable model artifact archival, integrity verification on load and controlled rollback.
 - [ ] Complete security review and production deployment.
 - [ ] Publish a presentation-ready technical case study.
 
