@@ -15,7 +15,7 @@ docker compose ps
 
 Open the application at http://localhost:8080 and API documentation at http://localhost:8000/docs.
 
-The stack contains PostgreSQL, the FastAPI service and the React frontend. The API image trains the v2 calibrated demonstration model from the committed synthetic training CSV during image construction. The model artifact and metadata are generated inside the image. At container startup, Alembic applies pending database migrations before Uvicorn starts. PostgreSQL stores metadata-only assessment audit events. Raw application features are not stored. The frontend is compiled as a static production build and served by Nginx.
+The stack contains PostgreSQL, the FastAPI service and the React frontend. The API image trains the v2 calibrated demonstration model from the committed synthetic training CSV during image construction. Each training run generates a version identifier containing the UTC build time and training dataset hash prefix. The model artifact and metadata are generated inside the image. At container startup, Alembic applies pending database migrations before Uvicorn starts. PostgreSQL stores model version records, artifact and dataset fingerprints, training provenance, evaluation summaries, and metadata-only assessment audit events. Raw application features are not stored. The frontend is compiled as a static production build and served by Nginx.
 
 To stop the stack:
 
@@ -53,6 +53,8 @@ Review every generated migration before applying it. Do not use `Base.metadata.c
 - `DATABASE_URL`: SQLAlchemy connection string. Docker Compose sets the PostgreSQL URL.
 - `POSTGRES_PASSWORD`: local PostgreSQL password. Change before any shared deployment.
 - `CREDIT_RISK_MODEL_PATH`: optional model artifact path.
+- `CREDIT_RISK_METADATA_PATH`: optional model metadata path.
+- `CREDIT_RISK_EVALUATION_PATH`: optional evaluation report path.
 - `CREDIT_RISK_DATA_PATH`: optional synthetic portfolio data path.
 - `CREDIT_RISK_SAMPLE_PATH`: optional cleaned synthetic sample data path.
 
