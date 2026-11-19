@@ -29,10 +29,19 @@ def main() -> None:
     health = request_json(f"{base}/health")
     assert health["status"] == "ok", health
     assert health["database_ready"] is True
+    assert health["model_registry_ready"] is True
 
     portfolio = request_json(f"{base}/api/v1/portfolio/summary")
     assert portfolio["applications"] > 0
     assert 0 <= portfolio["default_rate"] <= 1
+
+    registry = request_json(f"{base}/api/v1/model/registry")
+    assert registry["active_version"] == health["model_version"]
+    assert registry["versions"]
+    active_versions = [item for item in registry["versions"] if item["status"] == "active"]
+    assert len(active_versions) == 1
+    assert len(active_versions[0]["artifact_sha256"]) == 64
+    assert len(active_versions[0]["dataset_sha256"]) == 64
 
     evaluation = request_json(f"{base}/api/v1/model/evaluation")
     assert evaluation["final_test"]["sample_size"] > 0
@@ -63,6 +72,7 @@ def main() -> None:
                 "status": "passed",
                 "portfolio_applications": portfolio["applications"],
                 "held_out_test_size": evaluation["final_test"]["sample_size"],
+                "registered_model_versions": len(registry["versions"]),
                 "single_assessment": scored["risk_band"],
                 "batch_scored": batch["scored"],
                 "audit_records": audit["assessments_recorded"],
