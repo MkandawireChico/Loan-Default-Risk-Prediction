@@ -188,6 +188,107 @@ def wilson_interval(successes: int, total: int, z: float = 1.96):
     return [round(float(max(0, centre - margin)), 4), round(float(min(1, centre + margin)), 4)]
 
 
+def bootstrap_confidence_intervals(
+    y_true: np.ndarray,
+    probabilities: np.ndarray,
+    n_bootstrap: int = 500,
+    seed: int = 42,
+) -> dict[str, dict[str, float | int]]:
+    """Estimate stratified percentile intervals for held-out metric sampling variability."""
+    y_true = np.asarray(y_true, dtype=int)
+    probabilities = np.asarray(probabilities, dtype=float)
+    if len(y_true) != len(probabilities) or len(y_true) == 0:
+        raise ValueError("Targets and probabilities must have equal non-zero length")
+    positive = np.flatnonzero(y_true == 1)
+    negative = np.flatnonzero(y_true == 0)
+    if not len(positive) or not len(negative):
+        raise ValueError("Both target classes are required for stratified bootstrap intervals")
+    if n_bootstrap < 20:
+        raise ValueError("At least 20 bootstrap replicates are required")
+
+    rng = np.random.default_rng(seed)
+    values: dict[str, list[float]] = {
+        "roc_auc": [],
+        "pr_auc": [],
+        "brier_score": [],
+        "log_loss": [],
+    }
+    for _ in range(n_bootstrap):
+        sample = np.concatenate(
+            [
+                rng.choice(negative, size=len(negative), replace=True),
+                rng.choice(positive, size=len(positive), replace=True),
+            ]
+        )
+        sampled_y = y_true[sample]
+        sampled_probabilities = probabilities[sample]
+        values["roc_auc"].append(float(roc_auc_score(sampled_y, sampled_probabilities)))
+        values["pr_auc"].append(float(average_precision_score(sampled_y, sampled_probabilities)))
+        values["brier_score"].append(float(brier_score_loss(sampled_y, sampled_probabilities)))
+        values["log_loss"].append(float(log_loss(sampled_y, sampled_probabilities, labels=[0, 1])))
+
+    return {
+        name: {
+            "lower_95": round(float(np.percentile(scores, 2.5)), 5),
+            "upper_95": round(float(np.percentile(scores, 97.5)), 5),
+            "bootstrap_replicates": n_bootstrap,
+        }
+        for name, scores in values.items()
+    }
+
+
+def calibration_diagnostics(
+    y_true: np.ndarray,
+    probabilities: np.ndarray,
+    n_bins: int = 10,
+) -> dict[str, object]:
+    """Summarise observed outcomes against predicted probabilities in fixed-width bins."""
+    y_true = np.asarray(y_true, dtype=int)
+    probabilities = np.asarray(probabilities, dtype=float)
+    if len(y_true) != len(probabilities) or len(y_true) == 0:
+        raise ValueError("Targets and probabilities must have equal non-zero length")
+    if n_bins < 2:
+        raise ValueError("At least two calibration bins are required")
+    if not np.isfinite(probabilities).all() or ((probabilities < 0) | (probabilities > 1)).any():
+        raise ValueError("Probabilities must be finite values between zero and one")
+
+    edges = np.linspace(0.0, 1.0, n_bins + 1)
+    assignments = np.digitize(probabilities, edges[1:-1], right=False)
+    rows = []
+    weighted_error = 0.0
+    for index in range(n_bins):
+        mask = assignments == index
+        count = int(mask.sum())
+        if count == 0:
+            continue
+        observed = float(y_true[mask].mean())
+        predicted = float(probabilities[mask].mean())
+        weighted_error += count / len(y_true) * abs(observed - predicted)
+        rows.append(
+            {
+                "bin": f"{edges[index]:.1f}–{edges[index + 1]:.1f}",
+                "lower_bound": round(float(edges[index]), 2),
+                "upper_bound": round(float(edges[index + 1]), 2),
+                "applications": count,
+                "mean_predicted_probability": round(predicted, 5),
+                "observed_default_rate": round(observed, 5),
+                "observed_default_rate_95ci": wilson_interval(
+                    int(y_true[mask].sum()), count
+                ),
+            }
+        )
+    return {
+        "method": "Fixed-width probability bins",
+        "expected_calibration_error": round(float(weighted_error), 5),
+        "bins": rows,
+        "interpretation": (
+            "The expected calibration error is a sample-dependent summary. "
+            "Bin-level rates include Wilson intervals. These synthetic results "
+            "do not establish real-world probability calibration."
+        ),
+    }
+
+
 def group_diagnostics(
     audit_frame: pd.DataFrame,
     y_true: np.ndarray,
@@ -320,6 +421,10 @@ def main():
     # The final test partition is touched only after model and threshold are fixed.
     test_probabilities = calibrated.predict_proba(x_test)[:, 1]
     test_report = evaluate(y_test.to_numpy(), test_probabilities, threshold)
+    test_confidence_intervals = bootstrap_confidence_intervals(
+        y_test.to_numpy(), test_probabilities
+    )
+    calibration_report = calibration_diagnostics(y_test.to_numpy(), test_probabilities)
     fairness_report = group_diagnostics(
         test_raw,
         y_test.to_numpy(),
@@ -360,6 +465,8 @@ def main():
             "all_validation_thresholds": candidates,
         },
         "final_test": test_report,
+        "final_test_confidence_intervals": test_confidence_intervals,
+        "calibration_diagnostics": calibration_report,
         "subgroup_diagnostics": fairness_report,
         "model_artifact": str(model_path.relative_to(ROOT)),
         "limitations": [
