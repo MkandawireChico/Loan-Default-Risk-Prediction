@@ -85,7 +85,7 @@ The existing Streamlit dashboard remains available during the transition as a re
 - [x] Build FastAPI endpoints for health, model metadata, single assessment, batch scoring, portfolio analytics and explanations.
 - [x] Add PostgreSQL persistence for metadata-only assessment audit events.
 - [x] Add request validation, structured errors and API tests.
-- [ ] Add formal Alembic migrations and model registry lifecycle.
+- [x] Add formal Alembic migrations with upgrade/downgrade coverage.\n- [ ] Add model registry lifecycle.
 
 ### Phase 3: Product interface
 - [x] Build the React application with Portfolio Intelligence, Application Assessment, Model Governance, and Batch Analysis.
