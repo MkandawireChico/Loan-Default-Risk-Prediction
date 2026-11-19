@@ -14,9 +14,10 @@ The service expects the generated v2 model artifact, model metadata, synthetic r
 
 ## Endpoints
 
-- `GET /health`: API, model, portfolio and database readiness.
+- `GET /health`: API, model, portfolio, database and model-registry readiness.
 - `GET /api/v1/model`: model version, threshold and feature governance.
 - `GET /api/v1/model/evaluation`: held-out metrics and subgroup diagnostics.
+- `GET /api/v1/model/registry`: registered model versions, active/archived status, artifact and dataset fingerprints, training metadata and final-test summary.
 - `GET /api/v1/portfolio/summary`: synthetic portfolio summary.
 - `GET /api/v1/portfolio/breakdowns`: branch, segment and purpose summaries.
 - `GET /api/v1/assessments/sample`: synthetic example application.
@@ -29,6 +30,6 @@ Interactive API documentation is available at `/docs`.
 
 ## Database and audit boundary
 
-SQLAlchemy stores assessment metadata in PostgreSQL in Docker Compose or SQLite during local standalone development. Audit records contain the model version, probability, risk band, review flag, request source and timestamp. Raw features, names, identifiers and contact information are not persisted.
+SQLAlchemy stores model-version metadata and assessment metadata in PostgreSQL in Docker Compose or SQLite during local standalone development. Model artifacts remain in the application filesystem; the registry stores SHA-256 fingerprints, paths, training metadata and evaluation summaries. Audit records contain the model version, probability, risk band, review flag, request source and timestamp. Raw features, names, identifiers and contact information are not persisted.
 
 Set `DATABASE_URL` to configure the database. Do not use real customer data in this demonstration.
