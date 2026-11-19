@@ -257,8 +257,6 @@ def run_experiment(
     # Keep the logistic artifact as the reference temporal model; comparisons are not
     # used to promote a model based on the future test window.
     calibrated = fitted_models["calibrated_logistic_regression"]
-    selected = model_comparison["calibrated_logistic_regression"]["validation_operating_point"]
-    threshold = float(selected["threshold"])
     test_metrics = model_comparison["calibrated_logistic_regression"]["future_test_metrics"]
     model_path = output_dir / "temporal_synthetic_model.joblib"
     joblib.dump(calibrated, model_path)
