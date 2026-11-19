@@ -10,7 +10,18 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from api.models import AssessmentAudit
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./nyanja_credit_risk.db")
+def normalize_database_url(url: str) -> str:
+    """Use the installed Psycopg 3 driver for PostgreSQL connection URLs."""
+    if url.startswith("postgres://"):
+        return url.replace("postgres://", "postgresql+psycopg://", 1)
+    if url.startswith("postgresql://"):
+        return url.replace("postgresql://", "postgresql+psycopg://", 1)
+    return url
+
+
+DATABASE_URL = normalize_database_url(
+    os.getenv("DATABASE_URL", "sqlite:///./nyanja_credit_risk.db")
+)
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
 engine = create_engine(DATABASE_URL, pool_pre_ping=True, connect_args=connect_args)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
