@@ -58,7 +58,7 @@ The existing Streamlit dashboard remains available during the transition as a re
 ## Research and modelling standards
 
 - Keep the existing cross-sectional dataset as a reproducible baseline.
-- Extend the synthetic generator with explicit application and observation dates before claiming temporal validation or portfolio trends.
+- [x] Add a separate synthetic chronological scenario with application dates and a documented macro-stress mechanism. This is a methodological simulation, not observed temporal validation.
 - Separate training, validation, and final test data. Keep threshold selection and calibration away from the final test set.
 - Compare a naive baseline, Logistic Regression, Random Forest, and gradient boosting.
 - Report ROC-AUC and PR-AUC alongside default-class precision, recall, F1, specificity, confusion matrices, Brier score, log loss, and calibration plots.
@@ -77,7 +77,7 @@ The existing Streamlit dashboard remains available during the transition as a re
 ### Phase 1: Reliable ML core
 - Refactor training and inference into stable reusable interfaces.
 - Add strict input validation and schema contracts.
-- Add temporal synthetic data only with a documented generation mechanism.
+- [x] Add temporal synthetic data only with a documented generation mechanism.
 - Add robust evaluation, calibration, threshold selection, and explainability tests.
 - Produce versioned model metadata and reproducible reports.
 
