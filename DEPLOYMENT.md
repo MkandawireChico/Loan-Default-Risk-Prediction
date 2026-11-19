@@ -60,7 +60,20 @@ Never commit secrets, personal information or real financial records.
 
 ## Public deployment
 
-The first deployment target should run the API and frontend as separate services. Configure the frontend build with the public API URL and configure API CORS to allow only the public frontend origin. Terminate TLS at the hosting provider or reverse proxy. Use managed PostgreSQL with encrypted connections, automated backups, restricted network access and rotated credentials. Set the API database URL and frontend CORS origin through the hosting platform's secret/configuration manager. Never commit a populated `.env` file.
+A Render Blueprint is provided in `render.yaml`. It defines a Docker-based FastAPI service, a static frontend, and managed PostgreSQL in Frankfurt. The API accepts only the frontend's configured origin. The database connection URL is normalised for the installed Psycopg 3 driver.
+
+Review the selected plans in the Render dashboard before provisioning. The API uses the `1c-2g` service plan and PostgreSQL uses `basic-256mb`. These resources may incur charges. Do not provision them until you have reviewed and approved the current prices.
+
+To deploy:
+1. Push the deployment configuration to the GitHub branch you intend to deploy.
+2. In Render, create a new Blueprint and connect this repository.
+3. Select `render.yaml` and inspect every resource and estimated charge.
+4. Approve provisioning only after reviewing the costs.
+5. Wait for the database, API and frontend services to finish deploying.
+6. Verify the API `/health`, API documentation and frontend URL.
+7. Run the manual end-to-end checks below.
+
+Render handles TLS termination and static hosting. Never commit a populated `.env` file.
 
 Before publishing:
 1. Build and run the complete Docker Compose stack.
