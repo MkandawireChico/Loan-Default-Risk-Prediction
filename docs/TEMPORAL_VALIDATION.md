@@ -26,7 +26,7 @@ The date and macro variables are simulation controls. They are not observations 
 
 The partitions use whole months and never shuffle records across time boundaries. Winsorisation caps are learned from the training window only. Imputation, scaling, and category encoding remain inside the model pipeline. Probability calibration uses expanding-window TimeSeriesSplit folds within the training window. The validation set selects the operating threshold. The future test set is reserved for final evaluation.
 
-The report includes aggregate future-window metrics and month-by-month default rates, mean predicted probabilities, ROC-AUC where both classes are present, and Brier scores.
+The experiment compares a prior-only baseline, calibrated Logistic Regression, and calibrated Random Forest under identical chronological partitions. Each candidate selects its own review threshold on validation data under the same review-capacity constraint. The future test window reports ROC-AUC, PR-AUC, Brier score, log loss, threshold metrics, and month-by-month observed default rates, mean predicted probabilities, ROC-AUC where both classes are present, and Brier scores. The future test results are descriptive comparisons only. They do not select a winning model.
 
 ## Run
 
