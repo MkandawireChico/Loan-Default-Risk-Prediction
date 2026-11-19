@@ -100,7 +100,7 @@ The existing Streamlit dashboard remains available during the transition as a re
 ### Phase 4: Deployment and operations
 - [x] Containerize frontend, API and PostgreSQL for local development.
 - [x] Add CI checks, environment configuration, health checks and deployment documentation.
-- [x] Verify the full Docker Compose stack through automated end-to-end smoke tests.
+- [ ] Re-verify the full Docker Compose stack after adding build-time temporal model comparison.
 - [x] Add a Render Blueprint for API, static frontend and managed PostgreSQL.
 - [ ] Provision hosting after reviewing service/database charges and account access.
 - [ ] Verify the live application end to end.
