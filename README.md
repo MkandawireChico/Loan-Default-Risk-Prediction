@@ -116,7 +116,7 @@ VITE_API_URL=http://localhost:8000 npm run dev
 
 ## Model development protocol
 
-The v2 training workflow is implemented in [scripts/train_model_v2.py](scripts/train_model_v2.py).
+The v2 training workflow is implemented in [scripts/train_model_v2.py](scripts/train_model_v2.py). A separate synthetic chronological stress-test is implemented in [scripts/run_temporal_validation.py](scripts/run_temporal_validation.py) and documented in [docs/TEMPORAL_VALIDATION.md](docs/TEMPORAL_VALIDATION.md).
 
 1. Remove exact duplicate records before partitioning.
 2. Create stratified training, validation and final test partitions.
@@ -128,6 +128,8 @@ The v2 training workflow is implemented in [scripts/train_model_v2.py](scripts/t
 8. Select a review threshold on validation data under an explicit review-capacity constraint.
 9. Evaluate the selected model and threshold once on the held-out test partition.
 10. Save model artifact, metadata and evaluation report.
+
+A separate temporal experiment assigns 36 synthetic months, simulates a macro-stress shift, uses whole-month train/validation/future-test partitions, and reports month-level future performance. Its dates, stress values and outcomes are simulated, not observed Malawi banking data.
 
 The final test metrics are not used to select the model or threshold.
 
@@ -217,10 +219,11 @@ docs/                    Platform roadmap and design documentation
 - [x] React portfolio, assessment, batch and governance workspaces.
 - [x] Dockerfiles and Docker Compose configuration.
 - [x] Python and frontend CI checks configured.
-- [ ] Confirm green CI across the latest branch head.
-- [ ] Run and verify the complete Docker Compose stack.
+- [x] Confirm green CI across the latest branch head.
+- [x] Run and verify the complete Docker Compose stack.
 - [x] Add PostgreSQL persistence for metadata-only assessment audit events.
-- [ ] Add formal model registry lifecycle and database migrations.
+- [ ] Add formal model registry lifecycle.
+- [x] Add versioned PostgreSQL schema migrations.
 - [ ] Complete security review and production deployment.
 - [ ] Publish a presentation-ready technical case study.
 
