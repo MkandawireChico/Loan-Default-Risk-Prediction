@@ -180,3 +180,45 @@ def test_database_url_normalisation_uses_psycopg_three():
         "postgresql+psycopg://user:pass@host/db"
     )
     assert normalize_database_url("sqlite:///local.db") == "sqlite:///local.db"
+
+
+
+def test_model_registry_archives_previous_version_and_keeps_hashes():
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import Session
+
+    from api.db import get_model_registry, register_model_version
+    from api.models import Base
+
+    engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        register_model_version(
+            session,
+            model_version="model-v1",
+            model_type="Logistic Regression",
+            artifact_path="models/v1/model.joblib",
+            artifact_sha256="a" * 64,
+            dataset_sha256="b" * 64,
+            metadata={"random_seed": 42, "dataset_rows_after_exact_deduplication": 100},
+            evaluation={"final_test": {"roc_auc": 0.71}},
+        )
+        register_model_version(
+            session,
+            model_version="model-v2",
+            model_type="Calibrated Logistic Regression",
+            artifact_path="models/v2/model.joblib",
+            artifact_sha256="c" * 64,
+            dataset_sha256="d" * 64,
+            metadata={"random_seed": 43, "dataset_rows_after_exact_deduplication": 120},
+            evaluation={"final_test": {"roc_auc": 0.75}},
+        )
+        versions = {item["model_version"]: item for item in get_model_registry(session)}
+
+    assert versions["model-v1"]["status"] == "archived"
+    assert versions["model-v2"]["status"] == "active"
+    assert versions["model-v2"]["artifact_sha256"] == "c" * 64
+    assert versions["model-v2"]["training_seed"] == 43
+    assert versions["model-v2"]["final_test"]["roc_auc"] == 0.75
+    assert "applicant_features" not in str(versions)
+    engine.dispose()
