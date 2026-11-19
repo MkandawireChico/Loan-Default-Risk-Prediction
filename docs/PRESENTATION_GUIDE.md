@@ -32,7 +32,8 @@ Nyanja Credit Risk Intelligence: Building a Responsible, End-to-End Credit Risk 
 
 6. **Calibration and operating threshold**
    - Explain the difference between ranking and probability calibration.
-   - Show Brier score, log loss and calibration outputs.
+   - Show Brier score, log loss, fixed-width calibration bins and expected calibration error.
+   - Explain stratified bootstrap 95% intervals for held-out metrics and Wilson intervals for bin rates.
    - Explain the review-capacity constraint and its trade-offs.
    - Compare the prior-only baseline, calibrated Logistic Regression and calibrated Random Forest on a later synthetic time window.
 
