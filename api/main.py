@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import os
@@ -15,7 +16,14 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict, Field
 
-from api.db import SessionLocal, get_audit_summary, init_db, record_assessment
+from api.db import (
+    SessionLocal,
+    get_audit_summary,
+    get_model_registry,
+    init_db,
+    record_assessment,
+    register_model_version,
+)
 from src.models.schema import get_inference_feature_columns
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -23,6 +31,7 @@ MODEL_PATH = Path(os.getenv("CREDIT_RISK_MODEL_PATH", ROOT / "models/v2/credit_r
 METADATA_PATH = Path(os.getenv("CREDIT_RISK_METADATA_PATH", ROOT / "models/v2/metadata.json"))
 PORTFOLIO_PATH = Path(os.getenv("CREDIT_RISK_DATA_PATH", ROOT / "data/raw/loan_applications_synthetic.csv"))
 MODEL_VERSION = os.getenv("CREDIT_RISK_MODEL_VERSION", "credit-risk-calibrated-v2")
+EVALUATION_PATH = Path(os.getenv("CREDIT_RISK_EVALUATION_PATH", ROOT / "models/v2/evaluation_v2.json"))
 DEFAULT_THRESHOLD = float(os.getenv("CREDIT_RISK_THRESHOLD", "0.50"))
 
 FEATURES = get_inference_feature_columns()
@@ -219,6 +228,14 @@ def grouped_portfolio(frame: pd.DataFrame, column: str) -> list[dict[str, Any]]:
     ]
 
 
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as file_handle:
+        for chunk in iter(lambda: file_handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     if not MODEL_PATH.exists():
@@ -230,12 +247,30 @@ async def lifespan(app: FastAPI):
     app.state.model = joblib.load(MODEL_PATH)
     app.state.portfolio = pd.read_csv(PORTFOLIO_PATH)
     metadata = json.loads(METADATA_PATH.read_text(encoding="utf-8")) if METADATA_PATH.exists() else {}
+    evaluation = json.loads(EVALUATION_PATH.read_text(encoding="utf-8")) if EVALUATION_PATH.exists() else {}
     app.state.metadata = metadata
     app.state.threshold = float(os.getenv("CREDIT_RISK_THRESHOLD", metadata.get("decision_threshold", DEFAULT_THRESHOLD)))
+    with SessionLocal() as session:
+        register_model_version(
+            session,
+            model_version=MODEL_VERSION,
+            model_type=metadata.get("model_type", "Unknown model type"),
+            artifact_path=(
+                str(MODEL_PATH.relative_to(ROOT))
+                if MODEL_PATH.is_relative_to(ROOT)
+                else str(MODEL_PATH)
+            ),
+            artifact_sha256=sha256_file(MODEL_PATH),
+            dataset_sha256=sha256_file(PORTFOLIO_PATH),
+            metadata=metadata,
+            evaluation=evaluation,
+        )
+    app.state.model_registry_ready = True
     yield
     app.state.model = None
     app.state.portfolio = None
     app.state.database_ready = False
+    app.state.model_registry_ready = False
 
 
 app = FastAPI(
@@ -263,8 +298,16 @@ def health(request: Request) -> dict[str, Any]:
     loaded = getattr(request.app.state, "model", None) is not None
     data_loaded = getattr(request.app.state, "portfolio", None) is not None
     database_ready = getattr(request.app.state, "database_ready", False)
-    ready = loaded and data_loaded and database_ready
-    return {"status": "ok" if ready else "degraded", "model_loaded": loaded, "portfolio_loaded": data_loaded, "database_ready": database_ready, "model_version": MODEL_VERSION}
+    registry_ready = getattr(request.app.state, "model_registry_ready", False)
+    ready = loaded and data_loaded and database_ready and registry_ready
+    return {
+        "status": "ok" if ready else "degraded",
+        "model_loaded": loaded,
+        "portfolio_loaded": data_loaded,
+        "database_ready": database_ready,
+        "model_registry_ready": registry_ready,
+        "model_version": MODEL_VERSION,
+    }
 
 
 @app.get("/api/v1/model", tags=["Model"])
@@ -283,12 +326,20 @@ def model_information(request: Request) -> dict[str, Any]:
     }
 
 
+@app.get("/api/v1/model/registry", tags=["Model"])
+def model_registry(request: Request) -> dict[str, Any]:
+    if not getattr(request.app.state, "model_registry_ready", False):
+        raise HTTPException(status_code=503, detail="Model registry is not ready")
+    with SessionLocal() as session:
+        versions = get_model_registry(session)
+    return {"active_version": MODEL_VERSION, "versions": versions, "data_notice": DISCLAIMER}
+
+
 @app.get("/api/v1/model/evaluation", tags=["Model"])
 def model_evaluation() -> dict[str, Any]:
-    report_path = Path(os.getenv("CREDIT_RISK_EVALUATION_PATH", ROOT / "models/v2/evaluation_v2.json"))
-    if not report_path.exists():
+    if not EVALUATION_PATH.exists():
         raise HTTPException(status_code=503, detail="Model evaluation report is unavailable")
-    return json.loads(report_path.read_text(encoding="utf-8"))
+    return json.loads(EVALUATION_PATH.read_text(encoding="utf-8"))
 
 
 @app.get("/api/v1/portfolio/summary", tags=["Portfolio"])
