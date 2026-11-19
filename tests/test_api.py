@@ -222,3 +222,20 @@ def test_model_registry_archives_previous_version_and_keeps_hashes():
     assert versions["model-v2"]["final_test"]["roc_auc"] == 0.75
     assert "applicant_features" not in str(versions)
     engine.dispose()
+
+
+
+def test_assessment_uses_the_registered_model_version():
+    from api.main import score_features
+
+    class DummyModel:
+        def predict_proba(self, frame):
+            return np.array([[0.7, 0.3]])
+
+    result = score_features(
+        DummyModel(),
+        valid_payload(),
+        threshold=0.5,
+        model_version="credit-risk-calibrated-v2-test",
+    )
+    assert result.model_version == "credit-risk-calibrated-v2-test"
