@@ -226,8 +226,8 @@ docs/                    Platform roadmap and design documentation
 - [x] Model metadata registry with artifact and dataset fingerprints.
 - [x] Alembic migrations, PostgreSQL persistence and metadata-only assessment audit.
 - [x] Dockerfiles, Docker Compose and GitHub Actions workflows.
-- [ ] Verify green CI across the latest branch head after temporal report integration.
-- [ ] Re-verify the complete Docker Compose stack after temporal report integration.
+- [x] Verify green CI across the latest branch head after temporal report integration ([47-test quality run, temporal experiment and lint](https://github.com/MkandawireChico/Loan-Default-Risk-Prediction/actions/runs/44563224255)).
+- [x] Re-verify the complete Docker Compose stack after temporal report integration ([container smoke run](https://github.com/MkandawireChico/Loan-Default-Risk-Prediction/actions/runs/44563224255)).
 - [ ] Add durable model artifact archival, integrity verification on load and controlled rollback.
 - [ ] Complete security review and production deployment.
 - [ ] Publish a presentation-ready technical case study.
