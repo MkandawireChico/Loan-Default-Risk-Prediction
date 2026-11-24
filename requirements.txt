@@ -16,3 +16,4 @@ ruff>=0.1
 shap>=0.42
 streamlit>=1.28
 sqlalchemy>=2.0
+plotly>=5.18
