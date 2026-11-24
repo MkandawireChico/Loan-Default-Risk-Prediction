@@ -13,7 +13,7 @@ A fictional commercial bank provides personal and SME loans to customers across 
 
 ## Malawi Banking Context
 
-The synthetic data is shaped to be reasonably representative of a Malawian commercial banking environment: a mix of salaried (government and private), SME, self-employed, and youth/student customer segments; loan purposes spanning personal, business, agriculture, education, and asset finance; and realistic commercial lending interest rates (18–35% annually). **Branch names used (Blantyre, Lilongwe, Mzuzu, Zomba, Mangochi, Kasungu, Salima, Dedza, Rumphi, Mulanje) are real Malawian towns used as plausible location labels only — the notebook found no meaningful default-rate difference between branches (all cluster within 16–18%), which is expected since branch was not built into the synthetic default-generating process, and is stated here rather than implied as a finding.**
+The generated dataset is designed to reflect a plausible Malawian commercial banking environment: a mix of salaried (government and private), SME, self-employed, and youth/student customer segments; loan purposes spanning personal, business, agriculture, education, and asset finance; and realistic commercial lending interest rates (18–35% annually). **Branch names used (Blantyre, Lilongwe, Mzuzu, Zomba, Mangochi, Kasungu, Salima, Dedza, Rumphi, Mulanje) are real Malawian towns used as plausible location labels only — the notebook found no meaningful default-rate difference between branches (all cluster within 16–18%), which is expected since branch was not built into the synthetic default-generating process, and is stated here rather than implied as a finding.**
 
 ## Project Objectives
 
@@ -106,7 +106,7 @@ The default 0.50 threshold is not automatically optimal. Since a missed defaulte
 | 0.50 (default) | *(see notebook)* | *(see notebook)* | — | — |
 | **0.40 (recommended)** | 0.294 | **0.782** | 0.427 | 2,297 of 5,002 (test set) |
 
-**Recommended threshold: 0.40** — raises recall to 78.2% (catching substantially more real defaulters) at the cost of precision. **This is a starting point for discussion, not a final answer:** the actual threshold a bank should use requires validating false-positive cost (lost good business, manual review capacity) against false-negative cost (bad debt written off) with the credit-risk team's real figures, which this synthetic project has no way to know.
+**Recommended threshold: 0.40** — raises recall to 78.2% (catching substantially more real defaulters) at the cost of precision. **This is a starting point for discussion, not a final answer:** the actual threshold a bank should use requires validating false-positive cost (lost good business, manual review capacity) against false-negative cost (bad debt written off) with the credit-risk team's real figures, which this case study cannot establish.
 
 ## Feature Importance and Model Interpretation
 
@@ -122,7 +122,7 @@ The default 0.50 threshold is not automatically optimal. Since a missed defaulte
 2. **Prior default history is the sharpest behavioral signal**: one previous default more than doubles the default rate (14.7% → 32.0%), and it keeps climbing with each additional prior default.
 3. **Credit score bands cleanly separate risk**: Poor-band borrowers default at 75.8% versus 11.4% for Very Good — a gap wide enough to be genuinely decision-useful on its own.
 4. **Employment stability matters, but less than debt burden or history**: Unemployed applicants default at 28.1% versus ~15–18% for every employed category — a real but comparatively modest gap next to the DTI and prior-default effects.
-5. **Branch location shows no meaningful effect** (16.0–18.2% across all 10 branches) — reported here as a genuine (negative) finding rather than omitted, and expected given branch was not part of the synthetic default-generating process.
+5. **Branch location shows no meaningful effect** (16.0–18.2% across all 10 branches) — reported here as a genuine (negative) finding rather than omitted, and expected given branch was not part of the default-generating process.
 6. **The risk segmentation validates cleanly against actual outcomes**: Low/Medium/High risk categories (by predicted probability) show actual test-set default rates of **3.0%, 11.0%, and 37.0%** respectively — a clean monotonic separation confirming the categories mean what they claim.
 7. **No single model dominates on every metric** — Random Forest wins on ROC-AUC, Logistic Regression on recall — reinforcing that model selection for credit risk is a business trade-off, not a single-number leaderboard exercise.
 
@@ -143,7 +143,7 @@ The default 0.50 threshold is not automatically optimal. Since a missed defaulte
 - **Early-warning monitoring for existing borrowers who cross into Medium/High risk territory** after loan approval — since prior defaults and late payments are such strong signals (Finding #2), a borrower's *behavior after* approval is itself a leading indicator worth monitoring, not just the application-time snapshot.
 - **Manual review of borderline applications** — the 0.40 threshold recommendation deliberately trades precision for recall, meaning a meaningful share of flagged applicants will not actually default; a manual review layer prevents that trade-off from becoming automatic rejections of creditworthy borrowers.
 - **Do not treat unemployment as disqualifying on its own** (Finding #4) — its effect is real but modest next to DTI and credit history, so a blanket employment-status rule would be less accurate than the model's combined assessment.
-- **Regular model performance monitoring** — this model is trained on a synthetic snapshot; a real deployment would need ongoing recalibration as the bank's actual portfolio and macroeconomic conditions evolve.
+- **Regular model performance monitoring** — this model is trained on a generated snapshot; a real deployment would need ongoing recalibration as the bank's actual portfolio and macroeconomic conditions evolve.
 - **Responsible lending and human oversight**: this model is a decision-*support* tool, not a decision-*maker* — every recommendation above assumes a human credit officer remains in the loop, particularly for Medium and High risk cases near the threshold boundary.
 
 ## Dashboard Description
@@ -152,7 +152,7 @@ A 4-page Power BI dashboard specification (`dashboard/power_bi_dashboard_specifi
 
 ## Limitations
 
-- This is a cross-sectional synthetic snapshot, not a real historical loan book — there is no genuine time dimension, so trend analysis (e.g. "default rate over the last 12 months") is not available without extending the simulation.
+- This is a cross-sectional case-study snapshot, not a real historical loan book — there is no genuine time dimension, so trend analysis (e.g. "default rate over the last 12 months") is not available without extending the simulation.
 - The specific numbers throughout this README (e.g. "17.24% default rate," "0.776 ROC-AUC") are properties of this simulation's parameters and random seed, not measurements of any real bank's portfolio.
 - The recommended 0.40 threshold is a reasoned starting point, not a validated business decision — it requires real cost figures from an actual credit-risk team.
 - Collateral information exists in the dataset but was deliberately excluded from modeling (see Machine-Learning Methodology) — a production model might handle collateral differently depending on the bank's actual underwriting policy.
