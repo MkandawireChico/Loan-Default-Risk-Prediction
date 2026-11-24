@@ -10,7 +10,7 @@ No real customers, loans, or banking data are used or represented.
 Run:
     python generate_data.py
 Outputs:
-    ../data/raw/loan_applications_synthetic.csv
+    <repository-root>/data/raw/loan_applications_synthetic.csv
 """
 import numpy as np
 import pandas as pd
@@ -255,7 +255,8 @@ def main():
     df_raw = inject_data_quality_issues(df_clean)
     print(f"Raw dataset after injecting quality issues: {df_raw.shape[0]:,} rows")
 
-    out_dir = Path("../data/raw")
+    repository_root = Path(__file__).resolve().parent.parent
+    out_dir = repository_root / "data" / "raw"
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / "loan_applications_synthetic.csv"
     df_raw.to_csv(out_path, index=False)
