@@ -5,7 +5,6 @@
 
 This project builds a rigorous, reproducible credit-risk prediction workflow for a fictional commercial bank in Malawi: from reproducible data generation through data validation, cleaning, exploratory analysis, feature engineering, classification modeling (Logistic Regression, Random Forest, XGBoost), probability calibration, threshold analysis, model interpretation, fairness assessment, and risk segmentation — ending in an interactive Streamlit dashboard and comprehensive model documentation.
  
-**Recent Enhancements:** The project has been upgraded to a professional, modular codebase with reusable data validation, preprocessing pipelines, model benchmarking with cross-validation, probability calibration, fairness analysis, automated testing, and an interactive dashboard.
 
 ## Problem Statement
 
