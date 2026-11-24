@@ -31,8 +31,7 @@ st.title("🏦 Loan Default Risk Prediction Dashboard")
 st.markdown("""
 **Nyanja Commercial Bank (Fictional) - Credit Risk Analytics**
 
-This dashboard provides insights into loan default risk predictions using machine learning models.
-**Note:** This uses entirely synthetic data for educational purposes only.
+This dashboard provides insights into loan default risk predictions using machine learning models. It is a portfolio case study using generated records, not real bank or borrower data.
 """)
 
 # Sidebar
@@ -212,6 +211,5 @@ if show_predictions:
 # Footer
 st.markdown("---")
 st.markdown("""
-**Disclaimer:** This dashboard uses synthetic data created for educational purposes. 
-The bank, customers, loan records, branches, and model results do not represent any real commercial bank or actual banking data.
+
 """)
