@@ -215,14 +215,13 @@ Loan-Default-Risk-Prediction/
 │   ├── xgboost_pipeline.joblib
 │   └── benchmark_results.csv
 ├── visuals/                                    # Chart exports from notebook and scripts
-├── dashboard/
-│   └── power_bi_dashboard_specification.md     # Power BI specification
 ├── .github/
 │   └── workflows/
 │       └── ci.yml                             # GitHub Actions CI
 ├── app.py                                     # Streamlit dashboard
 ├── requirements.txt
 ├── pyproject.toml                             # Project configuration (pytest, ruff)
+├── power_bi_dashboard_specification.md         # Power BI specification
 ├── .gitignore
 └── README.md
 ```
