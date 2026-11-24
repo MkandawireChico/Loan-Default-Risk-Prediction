@@ -1,9 +1,9 @@
 # Loan Default Risk Prediction — Nyanja Commercial Bank  
-## Malawi Commercial Banking — Synthetic Portfolio Dataset
+## Malawi Commercial Banking — Credit Risk Case Study
 
 ## Project Overview
 
-This project builds a rigorous, reproducible credit-risk prediction workflow for a fictional commercial bank in Malawi: from synthetic data generation through data validation, cleaning, exploratory analysis, feature engineering, classification modeling (Logistic Regression, Random Forest, XGBoost), probability calibration, threshold analysis, model interpretation, fairness assessment, and risk segmentation — ending in an interactive Streamlit dashboard and comprehensive model documentation.
+This project builds a rigorous, reproducible credit-risk prediction workflow for a fictional commercial bank in Malawi: from reproducible data generation through data validation, cleaning, exploratory analysis, feature engineering, classification modeling (Logistic Regression, Random Forest, XGBoost), probability calibration, threshold analysis, model interpretation, fairness assessment, and risk segmentation — ending in an interactive Streamlit dashboard and comprehensive model documentation.
  
 **Recent Enhancements:** The project has been upgraded to a professional, modular codebase with reusable data validation, preprocessing pipelines, model benchmarking with cross-validation, probability calibration, fairness analysis, automated testing, and an interactive dashboard.
 
@@ -263,10 +263,6 @@ streamlit run app.py
 ```
 
 All paths use `np.random.seed(42)` and reproduce the same dataset described in this README.
-
-## Synthetic-Data Disclaimer
-
-**This project uses entirely synthetic data created for educational and portfolio purposes. The bank, customers, loan records, branches, financial figures, and model results do not represent any real commercial bank or actual banking data in Malawi.**
 
 ## Author
 
