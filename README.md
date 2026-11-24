@@ -168,7 +168,7 @@ Python (Pandas, NumPy, Matplotlib, Seaborn, SciPy, Scikit-learn, XGBoost, joblib
 ## Project Structure
 
 ```
-loan-default-risk-prediction/
+Loan-Default-Risk-Prediction/
 ├── data/
 │   ├── raw/
 │   │   └── loan_applications_synthetic.csv     # As generated + injected issues
@@ -230,14 +230,14 @@ loan-default-risk-prediction/
 ## Reproducibility Instructions
 
 ```bash
-git clone <this-repo>
-cd loan-default-risk-prediction
+git clone https://github.com/MkandawireChico/Loan-Default-Risk-Prediction.git
+cd Loan-Default-Risk-Prediction
 pip install -r requirements.txt
 
 # Option A: Run the full notebook (generates data + trains models + exports everything)
 jupyter notebook notebooks/loan_default_risk_analysis.ipynb
 
-# Option B: Use the modular scripts (recommended for production workflows)
+# Option B: Use the modular scripts (recommended for repeatable command-line runs)
 # Generate synthetic data
 python src/generate_data.py
 
